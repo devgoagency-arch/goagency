@@ -5,81 +5,89 @@ import BaseHead from "@components/BaseHead.astro";
 import BackgroundTexture from "@components/global/BackgroundTexture.astro";
 import Footer from "@components/global/Footer.astro";
 import Navigation from "@components/global/Navigation.astro";
-import { getLangFromUrl } from "../i18n/utils";
+import RankMathSeo from "@components/seo/RankMathSeo.astro";
+import { getLangFromUrl, getHreflangLinks } from "@i18n/utils";
+import type { WPPost } from "@lib/wordpress";
 
 const { pathname } = Astro.url;
+const lang = getLangFromUrl(Astro.url);
+const siteUrl = Astro.site?.toString() ?? "https://goagency.com";
 
 type Props = {
+	/** (Nuevo) Post/página de WP con metadatos RankMath embebidos */
+	wpPost?: WPPost | null;
+	/** (Legado) Props de AstroSeo directas – para páginas existentes */
 	seo?: AstroSeoProps;
+	/** SEO fallback si no hay wpPost ni seo */
+	fallbackTitle?: string;
+	fallbackDescription?: string;
+	/** Slug de la página para hreflang (sin prefijo de idioma) */
+	pageSlug?: string;
+	/** Color del blob del cursor (opcional) */
+	cursorColor?: string;
 };
 
-const { seo: seoProp } = Astro.props;
+const {
+	wpPost = null,
+	seo: legacySeo,
+	fallbackTitle = "Go Estrategia Creativa – Agencia Creativa",
+	fallbackDescription = "Transformamos marcas a través de estrategia creativa, diseño digital y contenido de impacto.",
+	pageSlug = "",
+	cursorColor,
+} = Astro.props;
 
-const lang = getLangFromUrl(Astro.url);
+// Hreflang para multiidioma
+const hreflangLinks = pageSlug ? getHreflangLinks(pageSlug, siteUrl) : [];
 
-const shareImage = new URL("/images/meta/mintaka_share.gif", Astro.site).toString();
-
-const defaultSeo: AstroSeoProps = {
-	title: "Web Agency Leading in Performant Web Design Solutions - Mintaka Studio",
-	description:
-		"Mintaka Studio excels in creating fast, user-friendly websites with a focus on aesthetic design and SEO optimization, ensuring a standout online presence",
-	canonical: "https://mintaka.co",
-	openGraph: {
-		url: "https://mintaka.co",
-		title: "Web Agency Leading in Performant Web Design Solutions - Mintaka Studio",
-		description:
-			"Mintaka Studio excels in creating fast, user-friendly websites with a focus on aesthetic design and SEO optimization, ensuring a standout online presence",
-		images: [
-			{
-				url: shareImage,
-				width: 1200,
-				height: 630,
-				alt: "Social open graph",
-				type: "image/gif",
-			},
-			{
-				url: shareImage,
-				width: 4096,
-				height: 4096,
-				alt: "Twitter open graph",
-				type: "image/gif",
-			},
-		],
-		site_name: "Mintaka",
-	},
-	twitter: {
-		handle: "@mintakastudio",
-		site: "@mintakastudio",
-		cardType: "summary_large_image",
-	},
-	additionalMetaTags: [
-		{
-			name: "publisher",
-			content: "Mintaka Studio",
-		},
-	],
-};
-
-const seo = {
-	...defaultSeo,
-	...seoProp,
-};
+// Si viene prop `seo` legacy y no hay wpPost → modo legado (páginas existentes)
+const useLegacySeo = !!legacySeo && !wpPost;
 
 function cursorFollowerActive() {
-	const paths = ["", "/", "/it/", "/it"];
-	return paths.includes(pathname);
+	const activePaths = [
+		"/",
+		"/es/",
+		"/es",
+		"/contact",
+		"/contact/",
+		"/contacto",
+		"/contacto/",
+		"/es/contacto",
+		"/es/contacto/",
+		"/about",
+		"/about/",
+		"/nosotros",
+		"/nosotros/",
+		"/es/nosotros",
+		"/es/nosotros/",
+	];
+	return (
+		activePaths.includes(pathname) ||
+		pathname.startsWith("/proyectos") ||
+		pathname.startsWith("/blog") ||
+		pathname.startsWith("/es/proyectos") ||
+		pathname.startsWith("/es/blog")
+	);
 }
 ---
 
 <html lang={lang}>
 	<head>
 		<BaseHead />
-		<AstroSeo {...seo} />
+		{
+			useLegacySeo ? (
+				<AstroSeo {...legacySeo} />
+			) : (
+				<RankMathSeo post={wpPost} siteUrl={siteUrl} fallbackTitle={fallbackTitle} fallbackDescription={fallbackDescription} />
+			)
+		}
+		<!-- Hreflang multiidioma -->
+		{hreflangLinks.map(({ lang: l, url }) => <link rel="alternate" hreflang={l} href={url} />)}
+		<link rel="alternate" hreflang="x-default" href={siteUrl} />
 	</head>
 	<body class="bg-slate-50">
 		<BackgroundTexture />
 		<Navigation />
-		{cursorFollowerActive() && <BlobCursorFollower />}
+		{cursorFollowerActive() && <BlobCursorFollower color={cursorColor} />}
 		<slot />
 		<Footer />
 	</body>

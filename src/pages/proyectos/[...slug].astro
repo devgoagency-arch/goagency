@@ -1,0 +1,163 @@
+---
+/**
+ * /work/[...slug] – Proyecto individual — SSR dinámico
+ * prerender = false → cada request hace un fetch fresco a WP
+ */
+export const prerender = false;
+
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import {
+	getWPProyectoBySlug,
+	getImageUrl,
+	getImageAlt,
+	getClienteName,
+	getProjectUrl,
+	getProjectDate,
+	getProjectRole,
+	getProjectExcerpt,
+	decodeWPHtml,
+} from "@lib/wordpress";
+import type { CollectionEntry } from "astro:content";
+import { getLangFromUrl, useTranslations } from "@i18n/utils";
+import GrainyGradient from "@components/global/GrainyGradient.astro";
+
+const { slug } = Astro.params;
+const lang = getLangFromUrl(Astro.url) as "en" | "es";
+const t = useTranslations(lang);
+
+// ─── Datos del proyecto ──────────────────────
+let title = "";
+let content = "";
+let imageUrl: string | null = null;
+let imageAlt = "";
+let projectUrl = "";
+let clientName = "";
+let projectDate = "";
+let projectRole = "";
+let projectExcerpt = "";
+let RenderedContent: any = null;
+let wpProject: any = null;
+
+// 1. ¿Existe en la colección MDX local?
+const localProjects = await getCollection("projects");
+const localProject =
+	localProjects.find((prj) => {
+		const parts = prj.slug.split("/");
+		const prjSlug = parts.length > 1 ? parts.slice(1).join("/") : parts[0];
+		return prjSlug === slug;
+	}) ?? null;
+
+if (localProject) {
+	const { Content } = await localProject.render();
+	RenderedContent = Content;
+	title = localProject.data.title;
+	imageUrl = localProject.data.image?.source?.src ?? null;
+	imageAlt = localProject.data.image?.alt ?? title;
+	projectUrl = localProject.data.link ?? "";
+} else {
+	// 2. Fetch directo a WP (sin caché, contenido siempre fresco)
+	wpProject = await getWPProyectoBySlug(slug as string);
+	if (!wpProject) return Astro.redirect("/work", 302);
+	title = decodeWPHtml(wpProject.title);
+	content = wpProject.content ?? "";
+	imageUrl = getImageUrl(wpProject);
+	imageAlt = getImageAlt(wpProject);
+	projectUrl = getProjectUrl(wpProject);
+	clientName = getClienteName(wpProject);
+	projectDate = getProjectDate(wpProject);
+	projectRole = getProjectRole(wpProject);
+	projectExcerpt = getProjectExcerpt(wpProject);
+}
+---
+
+<BaseLayout
+	wpPost={wpProject}
+	fallbackTitle={`${title} – Go Estrategia Creativa`}
+	fallbackDescription={projectExcerpt || wpProject?.excerpt || localProject?.data.description || ""}
+	pageSlug={`work/${slug}`}
+	cursorColor="#45ccaa">
+	<GrainyGradient colorBg="#f0fbf8" colorA="#45ccaa" colorB="#6FB18A" colorC="#EDB74D" class="proyecto-detalle">
+		<article class="section py-24 lg:py-32">
+			<div class="col-span-12 mx-auto max-w-5xl">
+				<!-- Header del proyecto -->
+				<header class="mb-12">
+					<h1 class="mb-4 text-5xl font-bold uppercase tracking-tight lg:text-7xl">{title}</h1>
+
+					<!-- Metadatos ACF: cliente, año, rol -->
+					{
+						(clientName || projectDate || projectRole) && (
+							<div class="mt-6 flex flex-wrap items-center gap-6 border-t border-stone-200 pt-6">
+								{clientName && (
+									<div>
+										<span class="text-xs font-bold uppercase tracking-widest text-stone-400">
+											{lang === "es" ? "Cliente" : "Client"}
+										</span>
+										<p class="mt-1 text-lg font-semibold text-primary-600">{clientName}</p>
+									</div>
+								)}
+								{projectDate && (
+									<div>
+										<span class="text-xs font-bold uppercase tracking-widest text-stone-400">
+											{lang === "es" ? "Fecha" : "Year"}
+										</span>
+										<p class="mt-1 text-lg font-semibold">{projectDate}</p>
+									</div>
+								)}
+								{projectRole && (
+									<div>
+										<span class="text-xs font-bold uppercase tracking-widest text-stone-400">
+											{lang === "es" ? "Rol / Servicios" : "Role / Services"}
+										</span>
+										<p class="mt-1 text-lg font-semibold">{projectRole}</p>
+									</div>
+								)}
+							</div>
+						)
+					}
+				</header>
+
+				<!-- Imagen destacada -->
+				{
+					imageUrl && (
+						<div class="mb-12 overflow-hidden rounded-2xl">
+							<img src={imageUrl} alt={imageAlt} class="h-auto w-full" loading="eager" />
+						</div>
+					)
+				}
+
+				<!-- Contenido MDX o HTML de WP -->
+				{
+					RenderedContent ? (
+						<div class="prose-styles">
+							<RenderedContent />
+						</div>
+					) : content ? (
+						<div class="wp-content prose-styles" set:html={content} />
+					) : projectExcerpt ? (
+						<div class="wp-content prose-styles" set:html={projectExcerpt} />
+					) : null
+				}
+
+				<!-- CTA y volver -->
+				<footer class="mt-16 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+					{
+						projectUrl && (
+							<a
+								href={projectUrl}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="inline-flex items-center gap-2 rounded-lg px-6 py-3 font-semibold text-white transition-colors"
+								style="background-color: #45ccaa;">
+								{t("blog.gotoproject")} ↗
+							</a>
+						)
+					}
+					<a href="/proyectos" class="text-stone-400 transition-colors hover:text-stone-700">
+						← {t("projects")}
+					</a>
+				</footer>
+			</div>
+		</article>
+	</GrainyGradient>
+</BaseLayout>

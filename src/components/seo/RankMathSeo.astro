@@ -1,0 +1,44 @@
+---
+/**
+ * RankMathSeo.astro
+ * Inyecta metadatos de RankMath Pro (desde WPGraphQL) en el <head>
+ *
+ * Uso:
+ *   <RankMathSeo post={wpPage} siteUrl="https://..." />
+ */
+
+import type { WPPage, WPPost } from "@lib/wordpress";
+import { extractWPSeo, rankMathToAstroSeo, getOrganizationSchema } from "@lib/seo";
+import { AstroSeo } from "@astrolib/seo";
+
+interface Props {
+	post?: WPPage | WPPost | null;
+	siteUrl?: string;
+	fallbackTitle?: string;
+	fallbackDescription?: string;
+}
+
+const {
+	post = null,
+	siteUrl = Astro.site?.toString() ?? "https://goestrategiacreativa.com",
+	fallbackTitle = "Go Estrategia Creativa",
+	fallbackDescription = "Agencia creativa que transforma marcas a través de estrategia, diseño y contenido.",
+} = Astro.props;
+
+const wpSeo = post ? extractWPSeo(post) : null;
+const seoProps = rankMathToAstroSeo(wpSeo, siteUrl);
+
+const orgSchema = getOrganizationSchema(siteUrl);
+---
+
+<!-- AstroSeo con datos de RankMath GraphQL -->
+<AstroSeo
+	title={seoProps.title ?? fallbackTitle}
+	description={seoProps.description ?? fallbackDescription}
+	canonical={seoProps.canonical}
+	openGraph={seoProps.openGraph}
+	twitter={seoProps.twitter}
+/>
+
+<!-- JSON-LD Organization Schema (siempre presente) -->
+<script type="application/ld+json" set:html={JSON.stringify(orgSchema)} />

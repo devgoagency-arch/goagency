@@ -1,7 +1,10 @@
 ---
+export const prerender = true;
+
 import PrivacyPage from "@/components/infopages/Privacy.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { AstroSeoProps } from "@astrolib/seo";
+import GrainyGradient from "@components/global/GrainyGradient.astro";
 
 const seo: AstroSeoProps = {
 	title: "Privacy Policy - Majestico Studio: Your Privacy Matters",
@@ -12,5 +15,7 @@ const seo: AstroSeoProps = {
 ---
 
 <BaseLayout seo={seo}>
-	<PrivacyPage />
+	<GrainyGradient colorBg="#f0fbf8" colorA="#45ccaa" colorB="#6FB18A" colorC="#EDB74D" class="info-page">
+		<PrivacyPage />
+	</GrainyGradient>
 </BaseLayout>

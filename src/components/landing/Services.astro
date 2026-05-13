@@ -46,7 +46,7 @@ const points = [
 	<div class="wrapper col-span-12 h-screen w-full">
 		<h2 class="sr-only">{t("services")}</h2>
 		<div class="indicators absolute left-0 top-0 mt-[10vh] hidden h-[80vh] w-1 flex-col justify-between gap-2">
-			{points.map(() => <div class="indicator w-full grow bg-[#333333]" />)}
+			{points.map(() => <div class="indicator w-full grow bg-[#e45331]" />)}
 		</div>
 		{
 			points.map(({ title, content, image }) => (
@@ -122,7 +122,7 @@ const points = [
 			tl.from((elem as HTMLElement).querySelector("article"), { autoAlpha: 0, translateY: 100 }, i);
 
 			if (i != points.length - 1) {
-				tl.to(indicators[i], { backgroundColor: "#333333", duration: 0.25 }, i + 0.75);
+				tl.to(indicators[i], { backgroundColor: "#e45331", duration: 0.25 }, i + 0.75);
 				tl.to((elem as HTMLElement).querySelector("article"), { autoAlpha: 0, translateY: -100 }, i + 0.75);
 				tl.to((elem as HTMLElement).querySelector("svg"), { autoAlpha: 0 }, i + 0.75);
 			}

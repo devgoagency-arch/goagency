@@ -1,0 +1,120 @@
+---
+export const prerender = true;
+
+/**
+ * /proyectos – Listado completo de proyectos
+ * Mismo layout 2 columnas escalonadas + GrainyGradient que el Home
+ */
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import WokCard from "@components/work/WokCard.astro";
+import Title from "@components/global/Title.astro";
+import GrainyGradient from "@components/global/GrainyGradient.astro";
+import { getWPProyectos, getWPProyectosPage, getImageUrl, getProjectExcerpt, decodeWPHtml } from "@lib/wordpress";
+import { useTranslations, getLangFromUrl } from "@i18n/utils";
+import type { WPPost } from "@lib/wordpress";
+
+const lang = getLangFromUrl(Astro.url) as "en" | "es";
+const t = useTranslations(lang);
+
+let wpPage = null;
+let projects: WPPost[] = [];
+
+try {
+	[wpPage, projects] = await Promise.all([getWPProyectosPage(), getWPProyectos(50)]);
+} catch {}
+---
+
+<BaseLayout
+	wpPost={wpPage}
+	fallbackTitle="Proyectos – Go Estrategia Creativa"
+	fallbackDescription="Nuestro portafolio de estrategia creativa, branding y proyectos digitales."
+	pageSlug="proyectos">
+	<GrainyGradient colorBg="#f0fbf8" colorA="#45ccaa" colorB="#6FB18A" colorC="#EDB74D" class="proyectos-page">
+		<section class="section proyectos-section py-20 lg:py-32">
+			<div class="col-span-12 col-start-1 mx-auto max-w-7xl">
+				<Title title={t("projects")} subtitle={t("projects.subtitle")} class="pb-10 pt-20 uppercase" />
+
+				{
+					projects.length > 0 ? (
+						<ol class="mt-24 grid grid-cols-1 gap-24 md:grid-cols-2 lg:mt-32 lg:gap-44">
+							{projects.map((project, index) => {
+								const imageUrl = getImageUrl(project);
+								const title = decodeWPHtml(project.title);
+								const description = getProjectExcerpt(project);
+								const isEven = index % 2 === 0;
+
+								return (
+									<WokCard
+										imageUrl={imageUrl}
+										project={title}
+										link={`/proyectos/${project.slug}`}
+										description={description}
+										class={
+											isEven
+												? `md:col-start-1 md:row-start-${Math.floor(index / 2) * 2 + 1} md:row-span-2`
+												: `md:col-start-2 md:row-start-${Math.floor(index / 2) * 2 + 2} md:row-span-2`
+										}
+									/>
+								);
+							})}
+						</ol>
+					) : (
+						<p class="mt-24 py-20 text-center text-stone-400">No hay proyectos publicados aún.</p>
+					)
+				}
+			</div>
+		</section>
+	</GrainyGradient>
+</BaseLayout>
+
+<style is:global>
+	.proyectos-page {
+		min-height: 100vh;
+	}
+	.proyectos-section ol li img {
+		--clip: 0%;
+		clip-path: inset(var(--clip) round 0.5rem);
+	}
+</style>
+
+<script>
+	import { gsap } from "gsap";
+	import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+	gsap.registerPlugin(ScrollTrigger);
+
+	function init() {
+		const previews = gsap.utils.toArray(".proyectos-section ol li img") as gsap.DOMTarget[];
+		previews.forEach((preview) => {
+			gsap.from(preview, {
+				scrollTrigger: {
+					trigger: preview,
+					start: "top bottom",
+					end: "center center",
+					scrub: 1,
+				},
+				ease: "power3.out",
+				"--clip": "30%",
+			});
+		});
+
+		if (window.innerWidth >= 768) {
+			const items = gsap.utils.toArray(".proyectos-section ol li") as gsap.DOMTarget[];
+			items.forEach((item) => {
+				gsap.to(item, {
+					scrollTrigger: {
+						trigger: ".proyectos-section ol",
+						start: "top bottom",
+						end: "bottom center",
+						scrub: 1,
+					},
+					ease: "none",
+					y: "-200px",
+				});
+			});
+		}
+	}
+
+	document.removeEventListener("DOMContentLoaded", init);
+	document.addEventListener("DOMContentLoaded", init);
+</script>

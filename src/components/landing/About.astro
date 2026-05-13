@@ -1,0 +1,98 @@
+---
+/**
+ * About.astro – Componente de equipo
+ * Muestra perfiles desde WordPress (CPT team / ACF)
+ */
+import { Image } from "astro:assets";
+import type { WPTeamMember } from "@lib/wordpress";
+import { getFeaturedImage, decodeWPHtml } from "@lib/wordpress";
+import { getLangFromUrl, useTranslations } from "@i18n/utils";
+
+interface Props {
+	members: WPTeamMember[];
+}
+
+const { members } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<section class="section py-20 lg:py-32">
+	<div class="col-span-12">
+		<h1 class="mb-4 text-center text-5xl font-bold uppercase tracking-tight lg:text-7xl">
+			{t("about.title")}
+		</h1>
+		<p class="mx-auto mb-16 max-w-2xl text-center text-lg text-stone-500">
+			{t("about.subtitle")}
+		</p>
+
+		<div class="mx-auto grid max-w-5xl grid-cols-1 gap-16 md:grid-cols-2">
+			{
+				members.map((member) => {
+					const photo = member.acf?.photo ?? getFeaturedImage(member);
+					const name = decodeWPHtml(member.title.rendered);
+					const role = member.acf?.role ?? "";
+					const bio = member.acf?.bio ?? member.excerpt?.rendered ?? "";
+
+					return (
+						<article class="flex flex-col items-center gap-8 text-center md:items-start md:text-left">
+							{photo && (
+								<div class="overflow-hidden rounded-2xl" style="aspect-ratio: 1/1; width: 220px;">
+									<img
+										src={photo.source_url}
+										alt={photo.alt_text || name}
+										width={photo.width ?? 440}
+										height={photo.height ?? 440}
+										class="h-full w-full object-cover"
+										loading="lazy"
+									/>
+								</div>
+							)}
+							{!photo && (
+								<div class="flex items-center justify-center rounded-2xl bg-primary-100" style="width:220px;height:220px;">
+									<span class="text-6xl font-bold text-primary-500">{name.charAt(0)}</span>
+								</div>
+							)}
+							<div>
+								<h2 class="text-3xl font-bold">{name}</h2>
+								{role && <p class="mt-1 font-medium text-primary-500">{role}</p>}
+								{bio && <div class="mt-4 leading-relaxed text-stone-500" set:html={bio} />}
+								<div class="mt-4 flex gap-4">
+									{member.acf?.linkedin && (
+										<a
+											href={member.acf.linkedin}
+											target="_blank"
+											rel="noopener"
+											class="text-stone-400 transition-colors hover:text-primary-500">
+											LinkedIn →
+										</a>
+									)}
+									{member.acf?.instagram && (
+										<a
+											href={member.acf.instagram}
+											target="_blank"
+											rel="noopener"
+											class="text-stone-400 transition-colors hover:text-primary-500">
+											Instagram →
+										</a>
+									)}
+								</div>
+							</div>
+						</article>
+					);
+				})
+			}
+
+			{
+				members.length === 0 && (
+					<div class="col-span-2 py-20 text-center text-stone-400">
+						<p>Team profiles will appear here once WordPress is configured.</p>
+						<p class="mt-2 text-sm">
+							Set <code>WORDPRESS_API_URL</code> in your .env file.
+						</p>
+					</div>
+				)
+			}
+		</div>
+	</div>
+</section>

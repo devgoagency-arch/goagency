@@ -1,58 +1,143 @@
 ---
+export const prerender = true;
+
+/**
+ * /blog/[...slug] – Post individual (híbrido MDX local + WordPress)
+ *
+ * Estrategia:
+ * 1. Lee colección local MDX (siempre disponible)
+ * 2. Cuando WP esté configurado, suma los posts de WP automáticamente
+ */
+import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
-import type { AstroSeoProps } from "@astrolib/seo";
-import MarkdownPostLayout from "../../layouts/MarkdownPostLayout.astro";
+import { getAllWPPostSlugs, getWPPostBySlug, getFeaturedImage, decodeWPHtml } from "@lib/wordpress";
+import type { CollectionEntry } from "astro:content";
+import { getLangFromUrl } from "@i18n/utils";
+import GrainyGradient from "@components/global/GrainyGradient.astro";
 
 export async function getStaticPaths() {
-	const blogEntries = await getCollection("posts");
+	// 1. Posts MDX locales (siempre)
+	const localPosts = await getCollection("posts");
+	const localPaths = localPosts.map((post) => {
+		const [postLang, ...slugParts] = post.slug.split("/");
+		const slug = slugParts.join("/");
+		const prefix = postLang === "en" ? "" : `/${postLang}`;
+		return {
+			params: { slug },
+			props: { localPost: post, wpPost: null, lang: postLang },
+		};
+	});
 
-	return blogEntries
-		.map((entry) => {
-			const [lang, ...slug] = entry.slug.split("/");
-			return { params: { lang, slug: slug.join("/") || undefined }, props: entry };
-		})
-		.filter((entry) => entry.params.lang === "en");
+	// 2. Posts WP (sólo si WORDPRESS_API_URL está configurado)
+	const wpPaths: any[] = [];
+	const wpUrl = import.meta.env.WORDPRESS_API_URL;
+	if (wpUrl && !wpUrl.includes("tu-wordpress.com")) {
+		try {
+			const enSlugs = await getAllWPPostSlugs("en");
+			const esSlugs = await getAllWPPostSlugs("es");
+			for (const { slug } of enSlugs) {
+				if (!localPaths.some((p) => p.params.slug === slug)) {
+					const wpPost = await getWPPostBySlug(slug, "en");
+					wpPaths.push({ params: { slug }, props: { localPost: null, wpPost, lang: "en" } });
+				}
+			}
+			for (const { slug } of esSlugs) {
+				if (!localPaths.some((p) => p.params.slug === slug)) {
+					const wpPost = await getWPPostBySlug(slug, "es");
+					wpPaths.push({ params: { slug }, props: { localPost: null, wpPost, lang: "es" } });
+				}
+			}
+		} catch {}
+	}
+
+	return [...localPaths, ...wpPaths];
 }
 
-const entry = Astro.props;
-const { Content } = await entry.render();
+interface Props {
+	localPost: CollectionEntry<"posts"> | null;
+	wpPost: any;
+	lang: string;
+}
 
-const seo: AstroSeoProps = {
-	title: entry.data.title,
-	description: entry.data.description,
-	canonical: `https://mintaka.co/blog/${entry.slug}/`,
-	openGraph: {
-		url: entry.slug,
-		title: entry.data.title,
-		description: "{frontmatter.description}",
-		images: [
-			{
-				url: "https://mintaka.co/opengraph/social-og.jpg",
-				width: 1200,
-				height: 630,
-				alt: "Social open graph",
-				type: "image/jpeg",
-			},
-			{
-				url: "https://mintaka.co/opengraph/twitter-og.jpg",
-				width: 4096,
-				height: 4096,
-				alt: "Twitter open graph",
-				type: "image/jpeg",
-			},
-			{ url: "https://mintaka.co/opengraph/social-og.jpg" },
-			{ url: "https://mintaka.co/opengraph/twitter-og.jpg" },
-		],
-		site_name: "YourSitesName",
-	},
-	twitter: {
-		handle: "@TwitterHandle",
-		site: "@site",
-		cardType: "summary_large_image",
-	},
-};
+const { localPost, wpPost } = Astro.props;
+const lang = getLangFromUrl(Astro.url) as "en" | "es";
+
+// ─── Post local (MDX) ───────────────────────────────────────────────
+let title = "";
+let content = "";
+let image = null as any;
+let date = "";
+let RenderedContent: any = null;
+
+if (localPost) {
+	const { Content } = await localPost.render();
+	RenderedContent = Content;
+	title = localPost.data.title;
+	image = localPost.data.image;
+	date = new Date(localPost.data.pubDate).toLocaleDateString(lang === "es" ? "es-CO" : "en-US", {
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+	});
+}
+
+// ─── Post WP ────────────────────────────────────────────────────────
+if (wpPost && !localPost) {
+	title = decodeWPHtml(wpPost.title.rendered);
+	content = wpPost.content?.rendered ?? "";
+	const wpImg = getFeaturedImage(wpPost);
+	if (wpImg) image = { source: wpImg.source_url, alt: wpImg.alt_text };
+	date = new Date(wpPost.date).toLocaleDateString(lang === "es" ? "es-CO" : "en-US", {
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+	});
+}
 ---
 
-<MarkdownPostLayout frontmatter={entry.data} body={entry.body} seo={seo}>
-	<Content />
-</MarkdownPostLayout>
+<BaseLayout
+	wpPost={wpPost}
+	fallbackTitle={`${title} – Go Blog`}
+	fallbackDescription={wpPost?.excerpt?.rendered ?? localPost?.data.description ?? ""}
+	pageSlug={`blog/${Astro.params.slug}`}
+	cursorColor="#a2d4a0">
+	<GrainyGradient colorBg="#f4f7f4" colorA="#a2d4a0" colorB="#aac887" colorC="#dcf2dc" class="blog-detalle">
+		<article class="section py-24 lg:py-32">
+			<div class="col-span-12 mx-auto max-w-3xl">
+				{date && <p class="mb-4 text-sm text-stone-400">{date}</p>}
+				<h1 class="mb-8 text-4xl font-bold leading-tight lg:text-6xl">{title}</h1>
+
+				{/* Imagen: local o WP */}
+				{
+					localPost?.data.image && (
+						<div class="mb-10 overflow-hidden rounded-2xl">
+							<img src={localPost.data.image.source.src} alt={localPost.data.image.alt} class="h-auto w-full" loading="eager" />
+						</div>
+					)
+				}
+				{
+					wpPost && !localPost && image?.source && (
+						<div class="mb-10 overflow-hidden rounded-2xl">
+							<img src={image.source} alt={image.alt || title} class="h-auto w-full" loading="eager" />
+						</div>
+					)
+				}
+
+				{/* Contenido: MDX renderizado o HTML de WP */}
+				{
+					RenderedContent ? (
+						<div class="prose-styles">
+							<RenderedContent />
+						</div>
+					) : content ? (
+						<div class="wp-content prose-styles" set:html={content} />
+					) : null
+				}
+
+				<div class="mt-16">
+					<a href="/blog" class="text-stone-400 transition-colors hover:text-stone-700">← Blog</a>
+				</div>
+			</div>
+		</article>
+	</GrainyGradient>
+</BaseLayout>

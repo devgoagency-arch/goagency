@@ -2,6 +2,8 @@
 import Newsletter from "@components/blog/Newsletter.astro";
 import { getLangFromUrl, useTranslatedPath, useTranslations } from "@i18n/utils";
 import { Icon } from "astro-icon/components";
+import { Image } from "astro:assets";
+import logoFullSrc from "@assets/images/global/logoFull.svg";
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
@@ -43,9 +45,14 @@ const translatePath = useTranslatedPath(lang);
 			<Newsletter />
 		</div>
 	</div>
+
+	<!-- Logo: misma posición/tamaño que header — fade-in al entrar el footer al viewport -->
+	<a href="/" aria-label="Home" class="footer-logo-link" style="padding: 2rem var(--base-padding-x);">
+		<Image src={logoFullSrc} alt="Logo" class="h-7 w-auto md:h-9" loading="lazy" />
+	</a>
+
 	<div class="relative mt-4 flex w-full items-end justify-between gap-y-4 text-sm lg:text-xl lg:font-normal">
 		<div>©2023 YOUR COMPANY</div>
-		<!-- https://codepen.io/fliseno1k/pen/WNboLBy -->
 		<button
 			id="go-top-button"
 			aria-label="Go to Top"
@@ -58,8 +65,6 @@ const translatePath = useTranslatedPath(lang);
 				</g>
 			</svg>
 		</button>
-
-		<!-- Scroll Up Arrow -->
 	</div>
 </footer>
 
@@ -67,24 +72,58 @@ const translatePath = useTranslatedPath(lang);
 	footer {
 		@apply relative flex w-full flex-col;
 	}
+
+	/* El logo del footer: mismo layout que el header logo (absolute, top-left) */
+	.footer-logo-link {
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 50;
+		display: flex;
+		align-items: center;
+		/* Oculto inicialmente — GSAP lo animará a opacity 1 */
+		opacity: 0;
+		transform: translateX(-16px);
+	}
 </style>
 
 <script>
 	import { gsap } from "gsap";
 	import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+	import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-	gsap.registerPlugin(ScrollToPlugin);
+	gsap.registerPlugin(ScrollToPlugin, ScrollTrigger);
 
 	function init() {
-		var goTopButton = document.getElementById("go-top-button");
+		const goTopButton = document.getElementById("go-top-button");
+		if (goTopButton) {
+			goTopButton.addEventListener("click", function () {
+				gsap.to(window, { duration: 0.5, scrollTo: 0 });
+			});
+		}
 
-		if (!goTopButton) return;
+		// Fade-in del logo: se activa cuando el footer entra al viewport
+		const footerLogo = document.querySelector(".footer-logo-link") as HTMLElement;
+		if (footerLogo) {
+			// Forzar estado inicial via GSAP (evita conflictos con CSS global)
+			gsap.set(footerLogo, { opacity: 0, x: -20 });
 
-		goTopButton.addEventListener("click", function () {
-			gsap.to(window, { duration: 0.5, scrollTo: 0 });
-		});
+			ScrollTrigger.create({
+				trigger: "footer",
+				start: "top 70%",
+				onEnter: () => {
+					gsap.to(footerLogo, {
+						opacity: 1,
+						x: 0,
+						duration: 0.9,
+						ease: "power3.out",
+					});
+				},
+				once: true,
+			});
+		}
 	}
 
-	document.removeEventListener("DOMContentLoaded", init); // astro:page-load
-	document.addEventListener("DOMContentLoaded", init); // astro:page-load
+	document.removeEventListener("DOMContentLoaded", init);
+	document.addEventListener("DOMContentLoaded", init);
 </script>

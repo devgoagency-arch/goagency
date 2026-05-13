@@ -6,6 +6,7 @@ import { defineConfig } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
+	output: "server",
 	vite: {
 		server: {
 			watch: {
@@ -13,10 +14,10 @@ export default defineConfig({
 			},
 		},
 	},
-	site: "https://mintaka.co",
+	site: "https://goestrategiacreativa.com",
 	i18n: {
 		defaultLocale: "en",
-		locales: ["en", "it"],
+		locales: ["en", "es"],
 	},
 	markdown: {
 		drafts: true,

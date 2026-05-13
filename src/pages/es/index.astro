@@ -2,8 +2,7 @@
 export const prerender = true;
 
 /**
- * / – Home page (English)
- * Consume contenido dinámico desde WordPress GraphQL
+ * /es/ – Home page (Español)
  */
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Hero from "@components/landing/Hero.astro";
@@ -11,15 +10,18 @@ import Services from "@components/landing/Services.astro";
 import Tagline from "@components/landing/Tagline.astro";
 import WorkPreview from "@components/landing/WorkPreview.astro";
 import Faq from "@components/landing/Faq.astro";
-import { getWPHomePage } from "@lib/wordpress";
+import { getWPPage } from "@lib/wordpress";
 
-const wpHome = await getWPHomePage();
+let wpHome = null;
+try {
+	wpHome = await getWPPage("home", "es");
+} catch {}
 ---
 
 <BaseLayout
 	wpPost={wpHome}
-	fallbackTitle="Go Estrategia Creativa – Creative Agency"
-	fallbackDescription="We transform brands through creative strategy, digital design and compelling content."
+	fallbackTitle="Go Estrategia Creativa – Agencia Creativa"
+	fallbackDescription="Transformamos marcas a través de estrategia creativa, diseño digital y contenido de impacto."
 	pageSlug="">
 	<Hero />
 	<WorkPreview class="!pt-20 pb-20 lg:!pt-36 lg:pb-40" />

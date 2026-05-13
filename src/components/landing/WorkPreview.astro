@@ -1,9 +1,12 @@
 ---
-import { Image } from "astro:assets";
-import { getCollection } from "astro:content";
-import yourProjectImage from "@assets/images/projects/yourProject.png";
+/**
+ * WorkPreview – Home Section
+ * Trae los últimos 6 proyectos publicados en WP CPT "proyectos"
+ * y los muestra con el layout masonry + animaciones GSAP.
+ */
 import WokCard from "@components/work/WokCard.astro";
-import { getLangFromUrl, useTranslatedPath, useTranslations } from "@i18n/utils";
+import { getLangFromUrl, useTranslations, useTranslatedPath } from "@i18n/utils";
+import { getWPProyectos, getImageUrl, getImageAlt, getProjectExcerpt, decodeWPHtml } from "@lib/wordpress";
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
@@ -11,41 +14,60 @@ const translatePath = useTranslatedPath(lang);
 
 const { class: className } = Astro.props;
 
-const allProjects = (await getCollection("projects"))
-	.filter((prj) => {
-		const [postLang, ...slug] = prj.slug.split("/");
-		return postLang === lang;
-	})
-	.map((prj) => {
-		const [postLang, slug] = prj.slug.split("/");
-
-		return {
-			...prj,
-			slug: slug,
-		};
-	})
-	.sort((a, b) => Number(b.data.pubDate) - Number(a.data.pubDate));
+// Trae hasta 6 proyectos de WordPress (los más recientes primero)
+let wpProjects: any[] = [];
+try {
+	wpProjects = await getWPProyectos(6);
+} catch {}
 ---
 
 <section id="projects" class:list={["section work-preview-section home-dark-section py-12", className]}>
 	<div class="col-span-12 col-start-1 mx-auto max-w-7xl">
 		<h2 class="sr-only">{t("projects")}</h2>
-		<ol class="grid grid-cols-1 gap-24 md:grid-cols-2 lg:gap-44">
-			{
-				allProjects.map((project, index) => (
-					<WokCard
-						image={project.data.image.source}
-						project={project.data.title}
-						link={`/work/${project.slug}`}
-						class={
-							index % 2 === 0
-								? `md:col-start-1 md:row-start-${Math.floor(index / 2) * 2 + 1} md:row-span-2`
-								: `md:col-start-2 md:row-start-${Math.floor(index / 2) * 2 + 2} md:row-span-2`
-						}
-					/>
-				))
-			}
-		</ol>
+
+		{
+			wpProjects.length > 0 ? (
+				<ol class="grid grid-cols-1 gap-24 md:grid-cols-2 lg:gap-44">
+					{wpProjects.map((project, index) => {
+						const imageUrl = getImageUrl(project);
+						const title = decodeWPHtml(project.title ?? "");
+						const description = getProjectExcerpt(project);
+						const slug = project.slug;
+
+						// Objeto de imagen compatible con WokCard (acepta string o ImageMetadata)
+						// WokCard usa <Image> si recibe un objeto con src, o <img> si recibe string
+						return (
+							<WokCard
+								imageUrl={imageUrl}
+								project={title}
+								link={`/proyectos/${slug}`}
+								description={description}
+								class={
+									index % 2 === 0
+										? `md:col-start-1 md:row-start-${Math.floor(index / 2) * 2 + 1} md:row-span-2`
+										: `md:col-start-2 md:row-start-${Math.floor(index / 2) * 2 + 2} md:row-span-2`
+								}
+							/>
+						);
+					})}
+				</ol>
+			) : (
+				<p class="py-12 text-center text-stone-400">No hay proyectos publicados aún.</p>
+			)
+		}
+
+		{/* CTA → /proyectos */}
+		{
+			wpProjects.length > 0 && (
+				<div class="mt-20 flex justify-center">
+					<a
+						href={translatePath("/proyectos")}
+						class="inline-flex items-center gap-2 rounded-full border border-current px-8 py-3 text-sm font-semibold uppercase tracking-widest transition-colors hover:border-[#45ccaa] hover:bg-[#45ccaa] hover:text-white">
+						{t("projects.all")} →
+					</a>
+				</div>
+			)
+		}
 	</div>
 </section>
 
@@ -110,6 +132,6 @@ const allProjects = (await getCollection("projects"))
 		}
 	}
 
-	document.removeEventListener("DOMContentLoaded", init); // astro:page-load
-	document.addEventListener("DOMContentLoaded", init); // astro:page-load
+	document.removeEventListener("DOMContentLoaded", init);
+	document.addEventListener("DOMContentLoaded", init);
 </script>

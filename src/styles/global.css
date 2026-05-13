@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -11,13 +12,109 @@
 }
 
 :root {
-	font-family: "Inter", sans-serif;
+	font-family: "Montserrat", sans-serif !important;
+	font-weight: 300;
 }
 
-@supports (font-variation-settings: normal) {
-	:root {
-		font-family: "Inter var", sans-serif;
-	}
+/* Forzar Montserrat en TODOS los elementos sin excepción */
+*,
+*::before,
+*::after {
+	font-family: "Montserrat", sans-serif !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: "Montserrat", sans-serif !important;
+	font-weight: 700 !important;
+}
+
+body,
+p,
+span,
+a,
+button,
+input,
+textarea,
+select,
+li,
+label,
+nav {
+	font-family: "Montserrat", sans-serif !important;
+	font-weight: 300;
+}
+
+/* =============================================
+   BRAND COLORS – Primary & Secondary
+   ============================================= */
+
+/* =============================================
+   NAVEGACIÓN – Fondo claro forzado
+   ============================================= */
+
+/* Fondo claro del contenedor principal del menú */
+.nav-container {
+	background-color: #dff4f0 !important;
+}
+
+/* Textos del menú: oscuros y legibles sobre fondo claro */
+.nav-container .menu-item {
+	color: #1a1a1a !important;
+}
+
+/* Icono de mail del menú mobile también oscuro */
+.nav-container .text-white {
+	color: #1a1a1a !important;
+}
+
+/* Todos los botones principales usan Primary */
+.squircle-bg,
+[class*="squircle-bg"]:not(.squircle-bg-light):not(.squircle-bg-white),
+button[type="submit"],
+a[class*="bg-zinc"] {
+	background-color: #45ccaa !important;
+}
+
+/* Texto blanco en botones primary */
+.squircle-bg a,
+.squircle-bg button {
+	color: #fff !important;
+}
+
+/* Hover de items de menú → fondo primary, texto blanco */
+nav ul:not(.collapsed) a:hover .menu-item-container {
+	background: #45ccaa !important;
+}
+
+nav ul:not(.collapsed) a:hover .menu-item-container .menu-item {
+	color: #fff !important;
+}
+
+/* Active (link actual) → permanece en primary */
+nav ul:not(.collapsed) a.active .menu-item-container {
+	background: #45ccaa !important;
+}
+
+nav ul:not(.collapsed) a.active .menu-item-container .menu-item {
+	color: #fff !important;
+}
+
+/* Todas las flechas SVG → color Secondary */
+svg path[fill="black"],
+svg path[fill="#000"],
+svg path[fill="#000000"] {
+	fill: #e45331 !important;
+}
+
+/* Flecha animada (LinkBlend, hero, newsletter arrow) */
+.link-blend svg path,
+button[aria-label*="Send"] svg path,
+button[aria-label*="newsletter"] svg path {
+	fill: #e45331 !important;
 }
 
 :root {
@@ -55,20 +152,25 @@ html {
 	border: none;
 	background-color: transparent;
 }
+
 ::-webkit-scrollbar {
 	width: 4px;
 	background-color: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
 	background-color: #1b1816;
 	border-radius: 2px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
 	background-color: #000;
 }
+
 .dark ::-webkit-scrollbar-thumb {
 	background-color: #e8e1e1;
 }
+
 .dark ::-webkit-scrollbar-thumb:hover {
 	background-color: #ffffff;
 }
@@ -79,14 +181,17 @@ html {
 	color: white;
 	background: orange;
 }
+
 ::selection {
 	color: white;
 	background: orange;
 }
+
 .dark ::-moz-selection {
 	color: orange;
 	background: white;
 }
+
 .dark ::selection {
 	color: orange;
 	background: white;
@@ -148,4 +253,116 @@ html {
 	--squircle-radius: 10px;
 	background: #fff;
 	mask-image: paint(squircle);
+}
+
+/* =============================================
+   ESTILOS BLINDADOS PARA CONTENIDO WORDPRESS
+   Sin importar el HTML que venga de WP, los
+   colores de marca siempre se aplican.
+   ============================================= */
+
+.wp-content,
+.prose-styles {
+	font-family: "Montserrat", sans-serif !important;
+	font-weight: 300;
+	color: #3f3f46;
+	line-height: 1.75;
+}
+
+/* Headings dentro de contenido WP */
+.wp-content h1,
+.wp-content h2,
+.wp-content h3,
+.wp-content h4,
+.wp-content h5,
+.wp-content h6 {
+	font-family: "Montserrat", sans-serif !important;
+	font-weight: 700 !important;
+	color: #18181b;
+	margin-top: 2rem;
+	margin-bottom: 1rem;
+}
+
+/* Links en contenido WP → Primary */
+.wp-content a {
+	color: #45ccaa !important;
+	text-decoration: underline;
+	transition: color 0.2s ease;
+}
+
+.wp-content a:hover {
+	color: #2ea888 !important;
+}
+
+/* Botones dentro de contenido WP → Primary */
+.wp-content .wp-block-button__link,
+.wp-content a.button,
+.wp-content a.btn,
+.wp-content button {
+	background-color: #45ccaa !important;
+	color: #fff !important;
+	border: none !important;
+	border-radius: 0.5rem;
+	padding: 0.6rem 1.5rem;
+	font-family: "Montserrat", sans-serif !important;
+	font-weight: 700 !important;
+	transition: background-color 0.2s ease;
+}
+
+.wp-content .wp-block-button__link:hover,
+.wp-content a.button:hover,
+.wp-content button:hover {
+	background-color: #2ea888 !important;
+}
+
+/* Flechas y iconos dentro de contenido WP → Secondary */
+.wp-content svg path[fill="black"],
+.wp-content svg path[fill="#000"],
+.wp-content .arrow,
+.wp-content .icon-arrow {
+	fill: #e45331 !important;
+	color: #e45331 !important;
+}
+
+/* Imágenes — siempre 100% de ancho, sin recorte */
+.wp-content img,
+.wp-content figure img {
+	max-width: 100%;
+	height: auto;
+	border-radius: 0.75rem;
+}
+
+/* Blockquote */
+.wp-content blockquote {
+	border-left: 4px solid #45ccaa;
+	padding-left: 1.5rem;
+	color: #71717a;
+	font-style: italic;
+}
+
+/* Code */
+.wp-content code {
+	background: #18181b;
+	color: #e5e7eb;
+	padding: 0.15rem 0.4rem;
+	border-radius: 0.25rem;
+	font-size: 0.875em;
+}
+
+.wp-content pre {
+	background: #18181b;
+	color: #e5e7eb;
+	padding: 1.5rem;
+	border-radius: 0.75rem;
+	overflow-x: auto;
+}
+
+/* Listas */
+.wp-content ul li::marker {
+	color: #45ccaa;
+}
+
+.wp-content ol li::marker {
+	color: #45ccaa;
+	font-weight: 700;
 }

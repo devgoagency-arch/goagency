@@ -1,5 +1,13 @@
+---
+interface Props {
+	color?: string;
+}
+
+const { color = "#edb74d" } = Astro.props;
+---
+
 <div id="cursor-follower" data-xdata="{ isTouchDevice: 'ontouchstart' in window }" data-xshow="!isTouchDevice">
-	<div id="blob" class="blob"></div>
+	<div id="blob" class="blob" style={`background-color: ${color};`}></div>
 </div>
 
 <script>
@@ -81,11 +89,9 @@
 
 <style>
 	#cursor-follower {
-		position: absolute;
+		pointer-events: none;
 		opacity: 0;
-		/* z-index: -20; */
-		height: 100%;
-		width: 100%;
+		z-index: 50; /* Por encima del contenido pero debajo de modales/nav si es necesario */
 		-webkit-transition: opacity 0.2s ease-in-out 1s;
 		transition: opacity 0.2s ease-in-out 1s;
 	}

@@ -6,12 +6,23 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const translatePath = useTranslatedPath(lang);
 
-const { image, project, link, description, class: className } = Astro.props;
+/**
+ * Acepta:
+ *  - image    → objeto ImageMetadata (proyectos MDX locales)
+ *  - imageUrl → string URL (proyectos de WordPress vía GraphQL)
+ */
+const { image, imageUrl, project, link, description, class: className } = Astro.props;
 ---
 
 <li class:list={["flex flex-col", className]}>
 	<a href={translatePath(link)} aria-label={`Project ${project}`}>
-		<Image class="h-[25rem] rounded-md object-cover lg:rounded-lg" src={image} alt={project} />
+		{
+			image ? (
+				<Image class="h-auto w-full rounded-md lg:rounded-lg" src={image} alt={project} />
+			) : imageUrl ? (
+				<img class="h-auto w-full rounded-md lg:rounded-lg" src={imageUrl} alt={project} loading="lazy" />
+			) : null
+		}
 	</a>
 	<div class="px-2 py-8">
 		<a href={translatePath(link)} class="flex items-center justify-between text-base font-medium lg:gap-x-8">
