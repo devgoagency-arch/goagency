@@ -17,9 +17,7 @@ import ScrollArrow from "@components/global/ScrollArrow.astro";
 		</div>
 
 		<!-- Contact Form -->
-		<form name="contact" method="POST" data-netlify="true" class="flex flex-col gap-10 bg-[#272521]/40 border border-zinc-800/50 p-8 md:p-12 rounded-3xl backdrop-blur-sm">
-			<!-- Hidden input for Netlify bot routing -->
-			<input type="hidden" name="form-name" value="contact" />
+		<form id="contact-form" class="flex flex-col gap-10 bg-[#272521]/40 border border-zinc-800/50 p-8 md:p-12 rounded-3xl backdrop-blur-sm">
 			
 			<!-- Personal Info Inputs -->
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -127,14 +125,21 @@ import ScrollArrow from "@components/global/ScrollArrow.astro";
 				</label>
 			</div>
 
+			<!-- Cloudflare Turnstile -->
+			<div class="cf-turnstile mt-2 flex justify-center" data-sitekey="0x4AAAAAADW1eKJkj2_OLoKM" data-theme="dark"></div>
+
+			<!-- Form Status Messages -->
+			<div id="form-error" class="hidden text-red-500 text-sm text-center font-medium"></div>
+			<div id="form-success" class="hidden text-[#45ccaa] text-sm text-center font-medium">Message sent successfully! We'll be in touch soon.</div>
+
 			<!-- Submit Button -->
 			<div class="mt-6 flex justify-center">
 				<button 
 					id="initialize-btn"
 					type="submit" 
-					class="group relative flex items-center gap-4 bg-white text-black px-8 py-4 rounded-full font-bold text-lg hover:bg-zinc-200 transition-colors overflow-hidden"
+					class="group relative flex items-center gap-4 bg-white text-black px-8 py-4 rounded-full font-bold text-lg hover:bg-zinc-200 transition-colors overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
 				>
-					<span>Initialize Request</span>
+					<span id="submit-text">Initialize Request</span>
 					<div class="w-8 h-8 flex items-center justify-center relative">
 						<img src="/images/GO-Agency-AI.png" alt="AI Core" class="ai-submit-icon w-full h-full object-contain absolute" />
 					</div>
@@ -163,16 +168,16 @@ import ScrollArrow from "@components/global/ScrollArrow.astro";
 
 	function initContact() {
 		const icon = document.querySelector(".ai-submit-icon");
-		if (!icon) return;
-
-		// Loop infinito simulando procesamiento de AI, exactamente igual al Hero
-		gsap.to(icon, {
-			rotation: "+=1440", // 4 vueltas completas
-			duration: 3,
-			ease: "power4.inOut",
-			repeat: -1,
-			repeatDelay: 0.8 // Pausa antes de la siguiente "solicitud"
-		});
+		if (icon) {
+			// Loop infinito simulando procesamiento de AI
+			gsap.to(icon, {
+				rotation: "+=1440", // 4 vueltas completas
+				duration: 3,
+				ease: "power4.inOut",
+				repeat: -1,
+				repeatDelay: 0.8 // Pausa antes de la siguiente "solicitud"
+			});
+		}
 
 		// Animación de entrada para el formulario
 		gsap.from("form", {
@@ -185,6 +190,54 @@ import ScrollArrow from "@components/global/ScrollArrow.astro";
 			duration: 1,
 			ease: "power3.out"
 		});
+
+		// Form Submission Logic
+		const form = document.getElementById("contact-form") as HTMLFormElement;
+		const errorDiv = document.getElementById("form-error");
+		const successDiv = document.getElementById("form-success");
+		const submitBtn = document.getElementById("initialize-btn") as HTMLButtonElement;
+		const submitText = document.getElementById("submit-text");
+
+		if (form && errorDiv && successDiv && submitBtn && submitText) {
+			// Prevenir múltiples listeners si hay transiciones de vista
+			form.removeEventListener("submit", handleFormSubmit);
+			form.addEventListener("submit", handleFormSubmit);
+
+			async function handleFormSubmit(e: Event) {
+				e.preventDefault();
+
+				errorDiv?.classList.add("hidden");
+				successDiv?.classList.add("hidden");
+				submitBtn.disabled = true;
+				submitText!.innerText = "Processing...";
+
+				try {
+					const formData = new FormData(form);
+					const response = await fetch("/api/contact", {
+						method: "POST",
+						body: formData
+					});
+					const result = await response.json();
+
+					if (response.ok) {
+						successDiv?.classList.remove("hidden");
+						form.reset();
+						if ((window as any).turnstile) (window as any).turnstile.reset();
+					} else {
+						errorDiv!.innerText = result.error || "An error occurred.";
+						errorDiv?.classList.remove("hidden");
+						if ((window as any).turnstile) (window as any).turnstile.reset();
+					}
+				} catch (err) {
+					errorDiv!.innerText = "Network error. Please try again.";
+					errorDiv?.classList.remove("hidden");
+					if ((window as any).turnstile) (window as any).turnstile.reset();
+				} finally {
+					submitBtn.disabled = false;
+					submitText!.innerText = "Initialize Request";
+				}
+			}
+		}
 	}
 
 	if (document.readyState === "loading") {
@@ -194,3 +247,4 @@ import ScrollArrow from "@components/global/ScrollArrow.astro";
 	}
 	document.addEventListener("astro:page-load", initContact);
 </script>
+<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
