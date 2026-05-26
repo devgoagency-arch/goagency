@@ -100,7 +100,7 @@ if (localProject) {
 	pageSlug={`work/${slug}`}
 	cursorColor="#45ccaa">
 	<GrainyGradient colorBg="#f0fbf8" colorA="#45ccaa" colorB="#6FB18A" colorC="#EDB74D" class="proyecto-detalle">
-		<article class="section pt-16 pb-24 lg:pt-20 lg:pb-32">
+		<article class="section !pt-32 !pb-24 lg:!pt-40 lg:!pb-32">
 			<div class="col-span-12 mx-auto max-w-7xl w-full">
 				<div class="grid grid-cols-1 gap-12 lg:grid-cols-[30%_70%] lg:gap-16 w-full">
 					
@@ -123,8 +123,8 @@ if (localProject) {
 						<!-- ACF Metadata fields with simple line divisions -->
 						<div class="flex flex-col divide-y divide-stone-200/80">
 							
-							{clientName && (
-								<div class="py-5 first:pt-0">
+							{clientName?.trim() && (
+								<div class="py-4 first:pt-0">
 									<span class="text-[0.65rem] font-bold uppercase tracking-widest text-stone-400 block mb-1">
 										{lang === "es" ? "Cliente" : "Client"}
 									</span>
@@ -132,8 +132,8 @@ if (localProject) {
 								</div>
 							)}
 
-							{projectChallenge && (
-								<div class="py-5 first:pt-0">
+							{projectChallenge?.trim() && (
+								<div class="py-4 first:pt-0">
 									<span class="text-[0.65rem] font-bold uppercase tracking-widest text-[#45ccaa] block mb-1">
 										{lang === "es" ? "El Desafío" : "The Challenge"}
 									</span>
@@ -141,8 +141,8 @@ if (localProject) {
 								</div>
 							)}
 
-							{projectSolution && (
-								<div class="py-5 first:pt-0">
+							{projectSolution?.trim() && (
+								<div class="py-4 first:pt-0">
 									<span class="text-[0.65rem] font-bold uppercase tracking-widest text-[#EDB74D] block mb-1">
 										{lang === "es" ? "La Solución" : "The Solution"}
 									</span>
@@ -150,8 +150,8 @@ if (localProject) {
 								</div>
 							)}
 
-							{projectResult && (
-								<div class="py-5 first:pt-0">
+							{projectResult?.trim() && (
+								<div class="py-4 first:pt-0">
 									<span class="text-[0.65rem] font-bold uppercase tracking-widest text-[#6FB18A] block mb-1">
 										{lang === "es" ? "El Resultado" : "The Result"}
 									</span>
@@ -159,9 +159,9 @@ if (localProject) {
 								</div>
 							)}
 
-							{(projectDate || projectRole) && (
-								<div class="py-5 first:pt-0 space-y-4">
-									{projectDate && (
+							{(projectDate?.trim() || projectRole?.trim()) && (
+								<div class="py-4 first:pt-0 space-y-4">
+									{projectDate?.trim() && (
 										<div>
 											<span class="text-[0.65rem] font-bold uppercase tracking-widest text-stone-400 block mb-1">
 												{lang === "es" ? "Fecha" : "Date"}
@@ -170,8 +170,8 @@ if (localProject) {
 										</div>
 									)}
 
-									{projectRole && (
-										<div class={projectDate ? "border-t border-stone-100 pt-3" : ""}>
+									{projectRole?.trim() && (
+										<div class={projectDate?.trim() ? "border-t border-stone-100 pt-3" : ""}>
 											<span class="text-[0.65rem] font-bold uppercase tracking-widest text-stone-400 block mb-1">
 												{lang === "es" ? "Rol / Servicios" : "Role / Services"}
 											</span>
@@ -181,8 +181,8 @@ if (localProject) {
 								</div>
 							)}
 
-							{projectUrl && (
-								<div class="py-5 first:pt-0 flex justify-start">
+							{projectUrl?.trim() && (
+								<div class="py-4 first:pt-0 flex justify-start">
 									<a href={projectUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-white bg-[#45ccaa] hover:bg-[#3ab899] transition-all rounded-full group">
 										<span>{lang === "es" ? "Visitar Proyecto" : "Visit Project"}</span>
 										<span class="inline-block transition-transform group-hover:translate-x-1 group-hover:-translate-y-1">↗</span>

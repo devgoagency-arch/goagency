@@ -113,16 +113,7 @@ const { pathname } = Astro.url;
 								</li>
 							))
 						}
-						<li>
-							<a href={translatePath(path, `${lang === "es" ? "en" : "es"}`)} class="inline-block cursor-pointer px-1 py-[0.33rem]">
-								<span class="menu-item-container inline-block">
-									<span
-										class="menu-item px-4 py-1 font-semibold uppercase tracking-wide text-zinc-400 hover:text-white focus:text-white focus:shadow-none focus:outline-none">
-										{lang === "es" ? "EN" : "ES"}
-									</span>
-								</span>
-							</a>
-						</li>
+
 					</ul>
 				</nav>
 			</div>

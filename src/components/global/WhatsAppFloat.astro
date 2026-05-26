@@ -1,12 +1,12 @@
 ---
 ---
 
-<div id="whatsapp-float" class="fixed bottom-6 right-6 z-50 pointer-events-auto transition-transform duration-500 ease-in-out translate-y-[50%] hover:translate-y-0">
+<div id="whatsapp-float" class="hidden fixed bottom-6 right-6 z-50 pointer-events-auto transition-transform duration-500 ease-in-out md:translate-y-[50%] md:hover:translate-y-0 translate-y-0">
 	<a 
 		href="https://wa.me/573164515556" 
 		target="_blank" 
 		rel="noopener noreferrer"
-		class="whatsapp-btn flex items-center gap-3 bg-[#18181b] p-2 pr-5 rounded-[10px] shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-zinc-800 transition-transform"
+		class="whatsapp-btn flex items-center gap-3 bg-[#18181b] p-2 md:pr-5 rounded-[10px] shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-zinc-800 transition-transform"
 	>
 		<!-- Icon -->
 		<div class="w-12 h-12 bg-[#25D366] rounded-[10px] flex items-center justify-center shrink-0">
@@ -15,8 +15,8 @@
 			</svg>
 		</div>
 		
-		<!-- Text Container -->
-		<div class="relative flex items-center h-6 w-[170px]">
+		<!-- Text Container (Desktop Only) -->
+		<div class="relative hidden md:flex items-center h-6 w-[170px]">
 			<span class="wa-text-default absolute left-0 whitespace-nowrap font-['Montserrat'] font-light text-white text-sm transition-opacity duration-300 opacity-100">
 				Hi, do you want to talk?
 			</span>
@@ -52,6 +52,20 @@
 		const waFloat = document.getElementById('whatsapp-float');
 		if (!waFloat) return;
 
+		// Check if cookies are already accepted
+		if (localStorage.getItem('go_cookie_consent') === 'accepted') {
+			startWhatsApp(waFloat);
+		} else {
+			// Listen for cookie acceptance
+			document.addEventListener('cookies-accepted', () => {
+				startWhatsApp(waFloat);
+			});
+		}
+	}
+
+	function startWhatsApp(waFloat) {
+		waFloat.classList.remove('hidden');
+
 		let isHovered = false;
 
 		// Track hover state
@@ -62,9 +76,9 @@
 			waFloat.classList.remove('force-show');
 		});
 
-		// Every 15 seconds
+		// Every 15 seconds (desktop only)
 		setInterval(() => {
-			if (!isHovered) {
+			if (!isHovered && window.innerWidth >= 768) {
 				waFloat.classList.add('force-show'); // Pop up fully
 				
 				// Stay for 2 seconds then go back to peek

@@ -36,6 +36,9 @@
 		function hideBanner(choice) {
 			localStorage.setItem('go_cookie_consent', choice);
 			banner?.classList.add('translate-y-full');
+			if (choice === 'accepted') {
+				document.dispatchEvent(new CustomEvent('cookies-accepted'));
+			}
 		}
 
 		acceptBtn.addEventListener('click', () => hideBanner('accepted'));
