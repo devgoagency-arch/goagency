@@ -49,7 +49,7 @@ export const POST: APIRoute = async ({ request }) => {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				from: "Go Agency Web <web@goestrategiacreativa.com>",
+				from: "Go Agency Web <hola@web.goestrategiacreativa.com>",
 				to: "nestor@goestrategiacreativa.com",
 				subject: `New Web Lead: ${name}`,
 				html: `
