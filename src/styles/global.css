@@ -80,7 +80,7 @@ li {
 /* Todos los botones principales usan Primary */
 .squircle-bg,
 [class*="squircle-bg"]:not(.squircle-bg-light):not(.squircle-bg-white),
-button[type="submit"],
+button[type="submit"]:not(#initialize-btn),
 a[class*="bg-zinc"] {
 	background-color: #45ccaa !important;
 }

@@ -204,6 +204,7 @@ const { pathname } = Astro.url;
 	import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
 
 	gsap.registerPlugin(DrawSVGPlugin, ScrollTrigger);
+	ScrollTrigger.config({ ignoreMobileResize: true });
 
 	function init() {
 		gsap.timeline({
