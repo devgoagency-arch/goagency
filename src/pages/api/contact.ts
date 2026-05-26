@@ -50,7 +50,7 @@ export const POST: APIRoute = async ({ request }) => {
 			},
 			body: JSON.stringify({
 				from: "Go Agency Web <onboarding@resend.dev>", // Resend testing domain (will only send to your verified Resend account email)
-				to: "hola@goestrategiacreativa.com",
+				to: "devgoagency@gmail.com",
 				subject: `New Web Lead: ${name}`,
 				html: `
 					<h2>New contact request</h2>
