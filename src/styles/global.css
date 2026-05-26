@@ -48,6 +48,12 @@ nav {
 	font-weight: 300;
 }
 
+body,
+p,
+li {
+	font-size: 15px;
+}
+
 /* =============================================
    BRAND COLORS – Primary & Secondary
    ============================================= */
@@ -324,12 +330,17 @@ html {
 	color: #e45331 !important;
 }
 
-/* Imágenes — siempre 100% de ancho, sin recorte */
+/* Imágenes y medios — siempre 100% de ancho, sin recorte y con sombra estilo ResultsBlock */
 .wp-content img,
-.wp-content figure img {
+.wp-content figure img,
+.wp-content video,
+.wp-content iframe,
+.wp-content embed,
+.wp-content object {
 	max-width: 100%;
 	height: auto;
-	border-radius: 0.75rem;
+	border-radius: 10px;
+	box-shadow: 0 8px 30px rgba(0,0,0,0.04);
 }
 
 /* Blockquote */

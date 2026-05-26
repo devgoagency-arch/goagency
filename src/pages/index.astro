@@ -7,10 +7,11 @@ export const prerender = true;
  */
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Hero from "@components/landing/Hero.astro";
-import Services from "@components/landing/Services.astro";
-import Tagline from "@components/landing/Tagline.astro";
+import Method from "@components/landing/Method.astro";
+import OurArchitecture from "@components/landing/OurArchitecture.astro";
+import TheTeam from "@components/landing/TheTeam.astro";
 import WorkPreview from "@components/landing/WorkPreview.astro";
-import Faq from "@components/landing/Faq.astro";
+import HomeContact from "@components/landing/HomeContact.astro";
 import { getWPHomePage } from "@lib/wordpress";
 
 const wpHome = await getWPHomePage();
@@ -22,8 +23,9 @@ const wpHome = await getWPHomePage();
 	fallbackDescription="We transform brands through creative strategy, digital design and compelling content."
 	pageSlug="">
 	<Hero />
-	<WorkPreview class="!pt-20 pb-20 lg:!pt-36 lg:pb-40" />
-	<Services />
-	<Tagline />
-	<Faq />
+	<Method />
+	<WorkPreview class="pt-24 lg:pt-32 pb-12 lg:pb-16" />
+	<OurArchitecture />
+	<TheTeam />
+	<HomeContact />
 </BaseLayout>

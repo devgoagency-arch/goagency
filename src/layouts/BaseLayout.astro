@@ -5,6 +5,9 @@ import BaseHead from "@components/BaseHead.astro";
 import BackgroundTexture from "@components/global/BackgroundTexture.astro";
 import Footer from "@components/global/Footer.astro";
 import Navigation from "@components/global/Navigation.astro";
+import LegalModals from "@components/global/LegalModals.astro";
+import CookieBanner from "@components/global/CookieBanner.astro";
+import WhatsAppFloat from "@components/global/WhatsAppFloat.astro";
 import RankMathSeo from "@components/seo/RankMathSeo.astro";
 import { getLangFromUrl, getHreflangLinks } from "@i18n/utils";
 import type { WPPost } from "@lib/wordpress";
@@ -90,5 +93,8 @@ function cursorFollowerActive() {
 		{cursorFollowerActive() && <BlobCursorFollower color={cursorColor} />}
 		<slot />
 		<Footer />
+		<LegalModals />
+		<CookieBanner />
+		<WhatsAppFloat />
 	</body>
 </html>

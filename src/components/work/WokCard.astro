@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import { getLangFromUrl, useTranslations, useTranslatedPath } from "@i18n/utils";
+import { extractTextSection } from "@lib/wordpress";
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
@@ -8,14 +9,30 @@ const translatePath = useTranslatedPath(lang);
 
 /**
  * Acepta:
- *  - image    → objeto ImageMetadata (proyectos MDX locales)
- *  - imageUrl → string URL (proyectos de WordPress vía GraphQL)
+ *  - image      → objeto ImageMetadata (proyectos MDX locales)
+ *  - imageUrl   → string URL (proyectos de WordPress vía GraphQL)
+ *  - content    → HTML crudo de Gutenberg (fallback para challenge/result)
+ *  - challenge  → texto directo ACF / frontmatter (preferido)
+ *  - result     → texto directo ACF / frontmatter (preferido)
+ *  - pillars    → array de { name, slug } para mostrar las píldoras de categoría
  */
-const { image, imageUrl, project, link, description, class: className } = Astro.props;
+const { image, imageUrl, project, link, description, content, challenge, result, pillars = [], class: className } = Astro.props;
+
+// Fallback: extraer de HTML si los directos no vienen
+const challengeText = challenge || extractTextSection(content, "The Challenge", "The Result");
+const resultText = result || extractTextSection(content, "The Result");
+
+// Mapa de slugs → etiquetas legibles (pilares)
+const PILLAR_LABELS: Record<string, string> = {
+	"digital-products-commerce":  "Digital Products & Commerce",
+	"brand-visual-strategy":      "Brand & Visual Strategy",
+	"corporate-communications":   "Corporate Communications",
+	"community-social-impact":    "Community & Social Impact",
+};
 ---
 
-<li class:list={["flex flex-col", className]}>
-	<a href={translatePath(link)} aria-label={`Project ${project}`}>
+<li class:list={["flex flex-col h-full", className]}>
+	<a href={translatePath(link)} aria-label={`Project ${project}`} class="block w-full">
 		{
 			image ? (
 				<Image class="h-auto w-full rounded-md lg:rounded-lg" src={image} alt={project} />
@@ -24,16 +41,49 @@ const { image, imageUrl, project, link, description, class: className } = Astro.
 			) : null
 		}
 	</a>
-	<div class="px-2 py-8">
-		<a href={translatePath(link)} class="flex items-center justify-between text-base font-medium lg:gap-x-8">
-			<h3 class="font-mono text-lg font-medium uppercase tracking-wide md:mt-0 lg:text-xl">
+	<div class="flex flex-col flex-grow px-2 py-8">
+		<a href={translatePath(link)} class="block mb-4">
+			<h3 class="font-display text-2xl lg:text-3xl font-bold tracking-tight uppercase">
 				{project}
 			</h3>
-			<span class="text-right text-base hover:text-primary-700">
-				<span class="hidden lg:inline-block">{t("projects.see")}</span>
-				<span class="sr-only">{project}</span> &nbsp; &rarr;
-			</span>
 		</a>
-		{description && <p class="mt-8 line-clamp-2 text-sm text-slate-500">{description}</p>}
+
+		{/* Pillar pills */}
+		{pillars.length > 0 && (
+			<div class="flex flex-wrap gap-2 mb-6">
+				{pillars.map((p: { name: string; slug: string }) => (
+					<span class="pillar-pill inline-flex items-center px-3 py-1 rounded-full text-[0.65rem] font-semibold uppercase tracking-widest border border-[#45ccaa]/30 text-[#45ccaa] bg-[#45ccaa]/8">
+						{PILLAR_LABELS[p.slug] ?? p.name}
+					</span>
+				))}
+			</div>
+		)}
+
+		<div class="space-y-6 flex-grow mb-8">
+			{challengeText && (
+				<div>
+					<h4 class="text-xs uppercase tracking-[0.2em] opacity-60 font-mono mb-2">The Challenge</h4>
+					<p class="text-sm opacity-90 line-clamp-2 leading-relaxed">{challengeText}</p>
+				</div>
+			)}
+			
+			{resultText && (
+				<div>
+					<h4 class="text-xs uppercase tracking-[0.2em] opacity-60 font-mono mb-2">The Result</h4>
+					<p class="text-sm opacity-90 leading-relaxed">{resultText}</p>
+				</div>
+			)}
+		</div>
+
+		<a href={translatePath(link)} class="block text-right text-sm uppercase tracking-widest font-medium text-slate-400 hover:text-white transition-colors mt-auto">
+			See project &rarr;
+		</a>
 	</div>
 </li>
+
+<style>
+	.pillar-pill {
+		background-color: rgb(69 204 170 / 0.08);
+	}
+</style>
+

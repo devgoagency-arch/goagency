@@ -25,7 +25,16 @@ const projectsCollection = defineCollection({
 			title: z.string(),
 			pubDate: z.date(),
 			description: z.string(),
-			link: z.string(),
+			link: z.string().optional(),
+			client: z.string().optional(),
+			date: z.string().optional(),
+			role: z.string().optional(),
+			challenge: z.string().optional(),
+			solution: z.string().optional(),
+			result: z.string().optional(),
+			// Pillar slugs: digital-products-commerce | brand-visual-strategy |
+			// corporate-communications | community-social-impact
+			pillars: z.array(z.string()).optional(),
 			author: z.object({
 				name: z.string(),
 				link: z.string(),
@@ -36,6 +45,7 @@ const projectsCollection = defineCollection({
 			}),
 		}),
 });
+
 
 const authorsCollection = defineCollection({
 	schema: ({ image }) =>

@@ -9,7 +9,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import WokCard from "@components/work/WokCard.astro";
 import Title from "@components/global/Title.astro";
 import GrainyGradient from "@components/global/GrainyGradient.astro";
-import { getWPProyectos, getWPProyectosPage, getImageUrl, getProjectExcerpt, decodeWPHtml } from "@lib/wordpress";
+import { getWPProyectos, getWPProyectosPage, getImageUrl, getProjectExcerpt, getProjectChallenge, getProjectResult, getProjectPillars, decodeWPHtml } from "@lib/wordpress";
 import { useTranslations, getLangFromUrl } from "@i18n/utils";
 import type { WPPost } from "@lib/wordpress";
 
@@ -41,6 +41,9 @@ try {
 								const imageUrl = getImageUrl(project);
 								const title = decodeWPHtml(project.title);
 								const description = getProjectExcerpt(project);
+								const challenge = getProjectChallenge(project);
+								const result = getProjectResult(project);
+								const pillars = getProjectPillars(project);
 								const isEven = index % 2 === 0;
 
 								return (
@@ -49,6 +52,10 @@ try {
 										project={title}
 										link={`/proyectos/${project.slug}`}
 										description={description}
+										challenge={challenge}
+										result={result}
+										pillars={pillars}
+										content={project.content}
 										class={
 											isEven
 												? `md:col-start-1 md:row-start-${Math.floor(index / 2) * 2 + 1} md:row-span-2`

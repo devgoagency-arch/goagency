@@ -1,5 +1,6 @@
 ---
 import LinkBlend from "@components/global/LinkBlend.astro";
+import ScrollArrow from "@components/global/ScrollArrow.astro";
 import { getLangFromUrl, useTranslations, useTranslatedPath } from "@i18n/utils";
 
 const lang = getLangFromUrl(Astro.url);
@@ -9,36 +10,25 @@ const translatePath = useTranslatedPath(lang);
 
 <section id="hero" class="section home-dark-section hero min-h-screen">
 	<div class="mx-auto flex h-full flex-col py-4 lg:py-10">
-		<div class="relative flex flex-1 flex-col justify-around rounded-lg pb-10 pt-20 lg:rounded-2xl">
-			<div class="flex justify-center">
-				<h1 class="text-center font-display text-5xl font-extrabold uppercase sm:text-7xl md:text-8xl lg:text-9xl">
-					<span>{t("hero.title.main")}</span>
-					<span class="rotator relative inline-flex h-20 w-full justify-center md:h-24 lg:h-32">
-						<span>{t("hero.title.1")}</span><span>{t("hero.title.2")}</span><span>{t("hero.title.3")}</span><span>
-							{t("hero.title.4")}
-						</span><span>{t("hero.title.1")}</span>
-					</span>
+		<div class="relative flex flex-1 flex-col justify-center rounded-lg pb-10 pt-20 lg:rounded-2xl gap-8">
+			<div class="flex flex-col items-center justify-center gap-4">
+				<span class="flex items-center gap-3 md:gap-4 text-xs md:text-sm font-medium uppercase tracking-[0.3em] text-zinc-500">
+					<span>STRATEGY-LED</span>
+					<img src="/images/GO-Agency-AI.png" alt="AI Core" class="ai-spin-icon w-6 h-6 md:w-8 md:h-8 object-contain drop-shadow-[0_0_8px_rgba(69,204,170,0.6)]" />
+					<span>AI-ACCELERATED</span>
+				</span>
+				<h1 class="text-center font-display text-4xl sm:text-5xl md:text-6xl lg:text-[5.25rem] leading-[1.1] tracking-tight">
+					<span class="block font-normal not-italic normal-case">We diagnose first.</span>
+					<span class="block font-normal italic normal-case">Then we build.</span>
 				</h1>
 			</div>
-			<div class="flex flex-col items-center gap-5 text-center lg:gap-10">
-				<p class="mt-8 max-w-3xl font-mono text-sm sm:text-base">
-					{t("hero.subtitle")}
+			
+			<div class="flex flex-col items-center gap-6 text-center lg:gap-10">
+				<p class="mt-4 max-w-3xl font-display text-lg font-light text-zinc-400 sm:text-2xl md:text-3xl">
+					Brand, strategy, digital products and communications.
 				</p>
-				<div class="flex flex-col items-center justify-center gap-3 lg:col-start-1">
-					<div class="squircle-bg rounded-lg bg-zinc-900" data-cursor-hover data-cursor-parallax>
-						<a
-							class="flex h-10 w-full max-w-52 flex-1 items-center justify-center px-4 py-2 text-xl text-slate-200 transition-all hover:text-white sm:w-auto md:font-bold lg:h-10"
-							aria-label="Contact Page"
-							href={translatePath("/contact/")}>
-							{t("contact")}
-						</a>
-					</div>
-
-					<small>
-						{t("or")}
-						<LinkBlend id="go-projects-button" isButton={true}>{t("hero.scroll")}</LinkBlend>
-					</small>
-				</div>
+				
+				<ScrollArrow targetId="#method" color="#e25432" id="hero-arrow" />
 			</div>
 		</div>
 	</div>
@@ -54,96 +44,43 @@ const translatePath = useTranslatedPath(lang);
 	.hero > div {
 		grid-column: 1 / span 12;
 	}
-
-	/* Hero appearance */
-	.hero h1,
-	.hero h2,
-	.hero h3 {
-		margin: 0;
-	}
-	.hero h1 {
-		margin: 0;
-		position: relative;
-		overflow: hidden;
-		visibility: hidden;
-	}
-	.hero h1 > div {
-		position: relative;
-		margin: 0;
-	}
-	.hero :global(.split-parent) {
-		overflow: hidden;
-	}
-	.hero :global(.split-child) {
-		display: inline-block;
-	}
-
-	/* Text rotator */
-	.rotator > span {
-		position: absolute;
-	}
-
-	.rotator > span:not(:nth-child(1)) {
-		opacity: 0;
+	.ai-spin-icon {
+		will-change: transform;
 	}
 </style>
 
 <script>
 	import { gsap } from "gsap";
-	import { ScrollTrigger } from "gsap/ScrollTrigger";
-	import { SplitText } from "gsap/SplitText";
-	import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 
-	gsap.registerPlugin(ScrollTrigger, SplitText, ScrollToPlugin);
+	function initHero() {
+		const icon = document.querySelector(".ai-spin-icon");
+		if (!icon) return;
 
-	function init() {
-		const childSplit = new SplitText(".hero h1", {
-			type: "lines",
-			linesClass: "split-child",
-		});
-		const parentSplit = new SplitText(".hero h1", {
-			linesClass: "split-parent",
-		});
-
-		gsap.timeline()
-			.from(childSplit.lines, {
-				duration: 1.5,
-				yPercent: 100,
-				ease: "power4",
-				stagger: 0.1,
-			})
-			.set(".hero h1", { visibility: "visible" }, "<")
-			.then(() => {
-				const words = document.querySelectorAll(".hero .rotator > span");
-
-				let rotatorTimeline = gsap.timeline({ repeat: -1 });
-				rotatorTimeline.timeScale(0.5);
-
-				for (let i = 0; i < words.length; i++) {
-					let delay = i - 1;
-					let wordTL = gsap.timeline();
-					if (i !== 0) {
-						gsap.set(words[i], { opacity: 1 });
-						wordTL.from(words[i], { duration: 1, yPercent: 100, opacity: 0, ease: "power4.out" });
-					} else {
-						// Handle the first one specially
-						delay += 1;
-						gsap.set(words[0], { opacity: 1, yPercent: 0 });
-					}
-
-					if (i !== words.length - 1) {
-						wordTL.to(words[i], { duration: 1, yPercent: -100, opacity: 0, ease: "power4.out" });
-					}
-					rotatorTimeline.add(wordTL, delay);
-				}
-			});
-
-		var goProjectsButton = document.getElementById("go-projects-button");
-		goProjectsButton?.addEventListener("click", function () {
-			gsap.to(window, { duration: 0.5, scrollTo: "#projects" });
+		// Entrada inicial: cae desde arriba girando rápido
+		gsap.from(icon, {
+			y: -150,
+			rotation: -1080,
+			opacity: 0,
+			duration: 2,
+			ease: "power3.out",
+			onComplete: () => {
+				// Loop infinito simulando procesamiento de AI
+				// Empieza lento, acelera muchísimo, frena hasta detenerse, y repite.
+				gsap.to(icon, {
+					rotation: "+=1440", // 4 vueltas completas
+					duration: 3,
+					ease: "power4.inOut",
+					repeat: -1,
+					repeatDelay: 0.8 // Pausa antes de la siguiente "solicitud"
+				});
+			}
 		});
 	}
 
-	document.removeEventListener("DOMContentLoaded", init); // astro:page-load
-	document.addEventListener("DOMContentLoaded", init); // astro:page-load
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", initHero);
+	} else {
+		initHero();
+	}
+	document.addEventListener("astro:page-load", initHero);
 </script>

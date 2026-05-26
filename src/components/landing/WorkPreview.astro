@@ -5,8 +5,9 @@
  * y los muestra con el layout masonry + animaciones GSAP.
  */
 import WokCard from "@components/work/WokCard.astro";
+import ScrollArrow from "@components/global/ScrollArrow.astro";
 import { getLangFromUrl, useTranslations, useTranslatedPath } from "@i18n/utils";
-import { getWPProyectos, getImageUrl, getImageAlt, getProjectExcerpt, decodeWPHtml } from "@lib/wordpress";
+import { getWPProyectos, getImageUrl, getImageAlt, getProjectExcerpt, getProjectChallenge, getProjectResult, getProjectPillars, decodeWPHtml } from "@lib/wordpress";
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
@@ -14,42 +15,52 @@ const translatePath = useTranslatedPath(lang);
 
 const { class: className } = Astro.props;
 
-// Trae hasta 6 proyectos de WordPress (los más recientes primero)
+// Trae hasta 5 proyectos de WordPress (los más recientes primero)
 let wpProjects: any[] = [];
 try {
-	wpProjects = await getWPProyectos(6);
+	wpProjects = await getWPProyectos(5);
 } catch {}
 ---
 
-<section id="projects" class:list={["section work-preview-section home-dark-section py-12", className]}>
-	<div class="col-span-12 col-start-1 mx-auto max-w-7xl">
-		<h2 class="sr-only">{t("projects")}</h2>
+<section id="projects" class:list={["section work-preview-section home-dark-section", className]}>
+	<div class="col-span-12 col-start-1 mx-auto max-w-7xl px-4 md:px-8">
+		<!-- Section Label -->
+		<div class="mb-12 lg:mb-20 text-center flex justify-center">
+			<h2 class="font-display text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight text-current">Selected Work</h2>
+		</div>
 
 		{
 			wpProjects.length > 0 ? (
 				<ol class="grid grid-cols-1 gap-24 md:grid-cols-2 lg:gap-44">
-					{wpProjects.map((project, index) => {
-						const imageUrl = getImageUrl(project);
-						const title = decodeWPHtml(project.title ?? "");
-						const description = getProjectExcerpt(project);
-						const slug = project.slug;
+					{
+						wpProjects.map((project, index) => {
+							const imageUrl = getImageUrl(project);
+							const title = decodeWPHtml(project.title ?? "");
+							const description = getProjectExcerpt(project);
+							const challenge = getProjectChallenge(project);
+							const result = getProjectResult(project);
+							const pillars = getProjectPillars(project);
+							const slug = project.slug;
 
-						// Objeto de imagen compatible con WokCard (acepta string o ImageMetadata)
-						// WokCard usa <Image> si recibe un objeto con src, o <img> si recibe string
-						return (
-							<WokCard
-								imageUrl={imageUrl}
-								project={title}
-								link={`/proyectos/${slug}`}
-								description={description}
-								class={
-									index % 2 === 0
-										? `md:col-start-1 md:row-start-${Math.floor(index / 2) * 2 + 1} md:row-span-2`
-										: `md:col-start-2 md:row-start-${Math.floor(index / 2) * 2 + 2} md:row-span-2`
-								}
-							/>
-						);
-					})}
+							return (
+								<WokCard
+									imageUrl={imageUrl}
+									project={title}
+									link={`/proyectos/${slug}`}
+									description={description}
+									challenge={challenge}
+									result={result}
+									pillars={pillars}
+									content={project.content}
+									class={
+										index % 2 === 0
+											? `md:col-start-1 md:row-start-${Math.floor(index / 2) * 2 + 1} md:row-span-2`
+											: `md:col-start-2 md:row-start-${Math.floor(index / 2) * 2 + 2} md:row-span-2`
+									}
+								/>
+							);
+						})
+					}
 				</ol>
 			) : (
 				<p class="py-12 text-center text-stone-400">No hay proyectos publicados aún.</p>
@@ -59,7 +70,7 @@ try {
 		{/* CTA → /proyectos */}
 		{
 			wpProjects.length > 0 && (
-				<div class="mt-20 flex justify-center">
+				<div class="mt-[var(--base-padding-y)] flex justify-center">
 					<a
 						href={translatePath("/proyectos")}
 						class="inline-flex items-center gap-2 rounded-full border border-current px-8 py-3 text-sm font-semibold uppercase tracking-widest transition-colors hover:border-[#45ccaa] hover:bg-[#45ccaa] hover:text-white">
@@ -68,6 +79,8 @@ try {
 				</div>
 			)
 		}
+
+		<ScrollArrow targetId="#architecture" upTargetId="#method" upColor="#45ccaa" color="#EDB74D" id="work-arrow" />
 	</div>
 </section>
 

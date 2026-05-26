@@ -1,0 +1,184 @@
+---
+import ScrollArrow from "@components/global/ScrollArrow.astro";
+---
+
+<section id="contact" class="home-dark-section contact-section w-full bg-[#18181b] text-white pt-12 lg:pt-16 pb-24 lg:pb-32 relative">
+	<div class="mx-auto max-w-4xl px-4 md:px-8">
+		
+		<!-- Header -->
+		<div class="mb-16 flex flex-col items-center text-center gap-4">
+			<span class="text-xs uppercase tracking-[0.2em] text-zinc-500 font-mono">Get in touch</span>
+			<h2 class="font-display text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight text-white">
+				Let's build something.
+			</h2>
+			<p class="text-lg font-light text-zinc-400 mt-4">
+				Tell us what your company needs, and we'll engineer the right solution.
+			</p>
+		</div>
+
+		<!-- Contact Form -->
+		<form name="contact" method="POST" data-netlify="true" class="flex flex-col gap-10 bg-[#272521]/40 border border-zinc-800/50 p-8 md:p-12 rounded-3xl backdrop-blur-sm">
+			<!-- Hidden input for Netlify bot routing -->
+			<input type="hidden" name="form-name" value="contact" />
+			
+			<!-- Personal Info Inputs -->
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+				<!-- Name -->
+				<div class="flex flex-col gap-3">
+					<label for="name" class="text-sm uppercase tracking-widest text-zinc-400 font-semibold">
+						Name
+					</label>
+					<input 
+						type="text" 
+						id="name" 
+						name="name" 
+						placeholder="Jane Doe" 
+						class="w-full bg-transparent border-b border-zinc-700 focus:border-[#45ccaa] text-white text-[15px] py-4 outline-none transition-colors placeholder:text-zinc-600 font-light"
+						required
+					/>
+				</div>
+
+				<!-- Phone -->
+				<div class="flex flex-col gap-3">
+					<label for="phone" class="text-sm uppercase tracking-widest text-zinc-400 font-semibold">
+						Phone
+					</label>
+					<input 
+						type="tel" 
+						id="phone" 
+						name="phone" 
+						placeholder="+1 (555) 000-0000" 
+						class="w-full bg-transparent border-b border-zinc-700 focus:border-[#45ccaa] text-white text-[15px] py-4 outline-none transition-colors placeholder:text-zinc-600 font-light"
+					/>
+				</div>
+
+				<!-- Email (Full Width) -->
+				<div class="flex flex-col gap-3 md:col-span-2">
+					<label for="email" class="text-sm uppercase tracking-widest text-zinc-400 font-semibold">
+						Email
+					</label>
+					<input 
+						type="email" 
+						id="email" 
+						name="email" 
+						placeholder="jane@company.com" 
+						class="w-full bg-transparent border-b border-zinc-700 focus:border-[#45ccaa] text-white text-[15px] py-4 outline-none transition-colors placeholder:text-zinc-600 font-light"
+						required
+					/>
+				</div>
+			</div>
+
+			<!-- Multi-select Pillars (Pills) -->
+			<div class="flex flex-col gap-4">
+				<label class="text-sm uppercase tracking-widest text-zinc-400 font-semibold">
+					Select the pillars involved:
+				</label>
+				<div class="flex flex-wrap gap-3">
+					<label class="cursor-pointer">
+						<input type="checkbox" name="pillars" value="digital_products" class="peer sr-only" />
+						<div class="px-6 py-3 rounded-full border border-zinc-700 text-zinc-400 peer-checked:bg-[#45ccaa] peer-checked:text-black peer-checked:border-[#45ccaa] transition-all hover:border-zinc-500 font-medium">
+							Digital Products & Commerce
+						</div>
+					</label>
+					<label class="cursor-pointer">
+						<input type="checkbox" name="pillars" value="brand_strategy" class="peer sr-only" />
+						<div class="px-6 py-3 rounded-full border border-zinc-700 text-zinc-400 peer-checked:bg-[#45ccaa] peer-checked:text-black peer-checked:border-[#45ccaa] transition-all hover:border-zinc-500 font-medium">
+							Brand & Visual Strategy
+						</div>
+					</label>
+					<label class="cursor-pointer">
+						<input type="checkbox" name="pillars" value="corporate_comms" class="peer sr-only" />
+						<div class="px-6 py-3 rounded-full border border-zinc-700 text-zinc-400 peer-checked:bg-[#45ccaa] peer-checked:text-black peer-checked:border-[#45ccaa] transition-all hover:border-zinc-500 font-medium">
+							Corporate Communications
+						</div>
+					</label>
+					<label class="cursor-pointer">
+						<input type="checkbox" name="pillars" value="social_impact" class="peer sr-only" />
+						<div class="px-6 py-3 rounded-full border border-zinc-700 text-zinc-400 peer-checked:bg-[#45ccaa] peer-checked:text-black peer-checked:border-[#45ccaa] transition-all hover:border-zinc-500 font-medium">
+							Community & Social Impact
+						</div>
+					</label>
+				</div>
+			</div>
+
+			<!-- Textarea -->
+			<div class="flex flex-col gap-3">
+				<label for="details" class="text-sm uppercase tracking-widest text-zinc-400 font-semibold">
+					Tell us more
+				</label>
+				<textarea 
+					id="details" 
+					name="details" 
+					rows="4" 
+					placeholder="Share your context, timeline, or current challenges..."
+					class="w-full bg-zinc-900/50 border border-zinc-700 rounded-xl focus:border-[#45ccaa] text-white text-[15px] p-6 outline-none transition-colors placeholder:text-zinc-600 font-light resize-none"
+				></textarea>
+			</div>
+
+			<!-- Submit Button -->
+			<div class="mt-4 flex justify-end">
+				<button 
+					type="button" 
+					class="group relative flex items-center gap-4 bg-white text-black px-8 py-4 rounded-full font-bold text-lg hover:bg-zinc-200 transition-colors overflow-hidden"
+					onclick="alert('Request sent to AI core for processing.')"
+				>
+					<span>Initialize Request</span>
+					<div class="w-8 h-8 flex items-center justify-center relative">
+						<img src="/images/GO-Agency-AI.png" alt="AI Core" class="ai-submit-icon w-full h-full object-contain absolute" />
+					</div>
+				</button>
+			</div>
+
+		</form>
+
+		<div class="flex justify-center mt-12 lg:mt-20">
+			<ScrollArrow upTargetId="#team" upColor="#45ccaa" id="contact-arrow" />
+		</div>
+	</div>
+</section>
+
+<style>
+	.ai-submit-icon {
+		will-change: transform;
+	}
+</style>
+
+<script>
+	import { gsap } from "gsap";
+	import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+	gsap.registerPlugin(ScrollTrigger);
+
+	function initContact() {
+		const icon = document.querySelector(".ai-submit-icon");
+		if (!icon) return;
+
+		// Loop infinito simulando procesamiento de AI, exactamente igual al Hero
+		gsap.to(icon, {
+			rotation: "+=1440", // 4 vueltas completas
+			duration: 3,
+			ease: "power4.inOut",
+			repeat: -1,
+			repeatDelay: 0.8 // Pausa antes de la siguiente "solicitud"
+		});
+
+		// Animación de entrada para el formulario
+		gsap.from("form", {
+			scrollTrigger: {
+				trigger: "#contact",
+				start: "top 80%",
+			},
+			y: 50,
+			opacity: 0,
+			duration: 1,
+			ease: "power3.out"
+		});
+	}
+
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", initContact);
+	} else {
+		initContact();
+	}
+	document.addEventListener("astro:page-load", initContact);
+</script>

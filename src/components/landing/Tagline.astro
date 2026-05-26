@@ -1,5 +1,6 @@
 ---
 import { getLangFromUrl, useTranslations, useTranslatedPath } from "@i18n/utils";
+import ScrollArrow from "@components/global/ScrollArrow.astro";
 
 const { class: className } = Astro.props;
 
@@ -9,7 +10,7 @@ const translatePath = useTranslatedPath(lang);
 ---
 
 <!-- The best thing? It's all in one -->
-<div id="smooth-wrapper" class:list={["section tagline-section relative bg-zinc-900 text-white", className]}>
+<div id="smooth-wrapper" class:list={["section tagline-section relative bg-zinc-900 text-white py-24 lg:py-32", className]}>
 	<div class="tagline-arrows">
 		<svg
 			stroke-linecap="round"
@@ -27,10 +28,14 @@ const translatePath = useTranslatedPath(lang);
 			<path class="opacity-0" id="tagline-arrow" stroke="white" stroke-width="12" d="M465.7 172.9l47.1 6-29.8 33.3-17.3-39.3z"></path>
 		</svg>
 	</div>
-	<div class="text col-span-12 flex justify-center font-light">
+	<div class="text col-span-12 flex justify-center font-light mb-12">
 		<p id="services-tagline" class="max-w-5xl text-center text-4xl md:text-5xl lg:text-7xl">
 			{t("tagline")}
 		</p>
+	</div>
+
+	<div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-50">
+		<ScrollArrow targetId="#faq" color="#e25432" id="tagline-arrow" />
 	</div>
 </div>
 

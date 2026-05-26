@@ -5,6 +5,7 @@ import designSvg from "@assets/images/services/creative-designer-doing-multitask
 import mobileSvg from "@assets/images/services/mobile-app-ui-ux-design.svg?raw";
 import seoSvg from "@assets/images/services/seo-link-building.svg?raw";
 import websiteSvg from "@assets/images/services/website-ui-ux-development.svg?raw";
+import ScrollArrow from "@components/global/ScrollArrow.astro";
 import { getLangFromUrl, useTranslations, useTranslatedPath } from "@i18n/utils";
 
 const lang = getLangFromUrl(Astro.url);
@@ -61,6 +62,10 @@ const points = [
 				</div>
 			))
 		}
+		
+		<div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-50">
+			<ScrollArrow targetId="#smooth-wrapper" color="#45ccaa" id="services-arrow" />
+		</div>
 	</div>
 </section>
 

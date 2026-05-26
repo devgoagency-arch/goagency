@@ -1,0 +1,87 @@
+---
+---
+
+<div id="whatsapp-float" class="fixed bottom-6 right-6 z-50 pointer-events-auto transition-transform duration-500 ease-in-out translate-y-[50%] hover:translate-y-0">
+	<a 
+		href="https://wa.me/573164515556" 
+		target="_blank" 
+		rel="noopener noreferrer"
+		class="whatsapp-btn flex items-center gap-3 bg-[#18181b] p-2 pr-5 rounded-[10px] shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-zinc-800 transition-transform"
+	>
+		<!-- Icon -->
+		<div class="w-12 h-12 bg-[#25D366] rounded-[10px] flex items-center justify-center shrink-0">
+			<svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+				<path d="M12.031 0C5.385 0 0 5.386 0 12.032c0 2.146.562 4.237 1.629 6.079L.15 23.46l5.485-1.44c1.785.98 3.805 1.503 5.867 1.503h.005c6.645 0 12.035-5.385 12.035-12.032C23.541 5.385 18.156 0 12.031 0zM12.031 21.507h-.005c-1.815 0-3.593-.487-5.148-1.41l-.368-.218-3.824 1.004 1.025-3.73-.24-.38A9.99 9.99 0 0 1 2.015 12.03c0-5.525 4.498-10.024 10.016-10.024 5.52 0 10.019 4.499 10.019 10.024 0 5.524-4.498 10.023-10.019 10.023zM17.532 14.02c-.302-.152-1.786-.882-2.063-.983-.277-.101-.479-.152-.68.152-.202.304-.78 .983-.956 1.186-.176.203-.353.228-.655.076-1.603-.805-2.73-1.611-3.793-3.395-.126-.203-.013-.313.138-.464.136-.135.302-.353.453-.53.151-.177.202-.303.302-.505.1-.202.05-.38-.025-.531-.076-.151-.68-1.643-.932-2.25-.246-.591-.497-.512-.68-.521-.177-.008-.38-.01-.582-.01-.202 0-.529.076-.806.38-.277.303-1.057 1.034-1.057 2.52 0 1.487 1.082 2.925 1.233 3.128.15.203 2.134 3.256 5.172 4.564.72.312 1.282.498 1.722.637.723.23 1.382.197 1.9.12.583-.087 1.786-.731 2.037-1.438.252-.708.252-1.316.177-1.439-.076-.123-.277-.2-.58-.352z"/>
+			</svg>
+		</div>
+		
+		<!-- Text Container -->
+		<div class="relative flex items-center h-6 w-[170px]">
+			<span class="wa-text-default absolute left-0 whitespace-nowrap font-['Montserrat'] font-light text-white text-sm transition-opacity duration-300 opacity-100">
+				Hi, do you want to talk?
+			</span>
+			<span class="wa-text-hover absolute left-0 whitespace-nowrap font-['Montserrat'] font-bold text-[#45ccaa] text-sm transition-opacity duration-300 opacity-0">
+				Let's start &rarr;
+			</span>
+		</div>
+	</a>
+</div>
+
+<style>
+	/* Hover Effects */
+	#whatsapp-float:hover .whatsapp-btn {
+		transform: scale(1.05);
+	}
+
+	#whatsapp-float:hover .wa-text-default {
+		opacity: 0;
+	}
+
+	#whatsapp-float:hover .wa-text-hover {
+		opacity: 1;
+	}
+
+	/* Override inline classes when forcing show via JS */
+	#whatsapp-float.force-show {
+		transform: translateY(0) !important;
+	}
+</style>
+
+<script>
+	function initWhatsApp() {
+		const waFloat = document.getElementById('whatsapp-float');
+		if (!waFloat) return;
+
+		let isHovered = false;
+
+		// Track hover state
+		waFloat.addEventListener('mouseenter', () => isHovered = true);
+		waFloat.addEventListener('mouseleave', () => {
+			isHovered = false;
+			// Remove force-show if mouse leaves while it was popping up
+			waFloat.classList.remove('force-show');
+		});
+
+		// Every 15 seconds
+		setInterval(() => {
+			if (!isHovered) {
+				waFloat.classList.add('force-show'); // Pop up fully
+				
+				// Stay for 2 seconds then go back to peek
+				setTimeout(() => {
+					if (!isHovered) {
+						waFloat.classList.remove('force-show');
+					}
+				}, 2000);
+			}
+		}, 15000);
+	}
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initWhatsApp);
+	} else {
+		initWhatsApp();
+	}
+
+	document.addEventListener('astro:page-load', initWhatsApp);
+</script>

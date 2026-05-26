@@ -21,12 +21,12 @@ let pages = [
 		url: "/proyectos/",
 	},
 	{
-		title: "Blog",
-		url: "/blog/",
+		title: "About",
+		url: "/#team",
 	},
 	{
 		title: t("contacts"),
-		url: "/contact/",
+		url: "/#contact",
 	},
 ];
 
@@ -40,8 +40,11 @@ let pages = [
 const { pathname } = Astro.url;
 ---
 
+<!-- Dynamic Header Backdrop -->
+<div id="header-backdrop" class="fixed top-0 left-0 w-full h-[4.5rem] md:h-[5.9rem] z-40 backdrop-blur-md bg-black/5 transition-colors duration-500 pointer-events-none"></div>
+
 <header>
-	<a href={translatePath("/")} aria-label="Home" class="logo absolute z-50 flex h-[4.5rem] items-center md:h-[5.9rem]">
+	<a href={translatePath("/")} aria-label="Home" class="logo fixed z-50 flex h-[4.5rem] items-center md:h-[5.9rem]">
 		<Image src={logoSrc} alt="Logo" class="logo-img h-7 w-auto md:h-9" loading="eager" />
 	</a>
 </header>
@@ -51,8 +54,14 @@ const { pathname } = Astro.url;
 			<div
 				class="shadow-thick resizable nav-container squircle relative mx-auto flex w-full flex-col justify-center overflow-x-hidden backdrop-blur-xl backdrop-filter md:flex-row-reverse"
 				style="background-color: #dff4f0;">
+				<!-- Desktop Hamburger Button (Visible only when collapsed) -->
+				<div class="desktop-hamburger hidden md:flex absolute inset-0 items-center justify-center cursor-pointer opacity-0 pointer-events-none transition-opacity duration-300">
+					<svg class="h-6 w-6 text-zinc-800" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path>
+					</svg>
+				</div>
 				<div class="flex flex-row items-center justify-end md:hidden">
-					<a class="px-3 py-[0.4rem] pl-4" href={translatePath("/contact/")} aria-label="Contact Page">
+					<a class="px-3 py-[0.4rem] pl-4" href={translatePath("/#contact")} aria-label="Contact Page">
 						<Icon class="text-white" name="octicon:mail-16" width="20" data-xbind.class="{'hidden': open}" />
 					</a>
 					<button
@@ -128,12 +137,27 @@ const { pathname } = Astro.url;
 	.navigation.navbar-open {
 		/* sin blend mode */
 	}
-	.navigation,
-	.logo {
+	.navigation {
 		padding: 1rem var(--base-padding-x);
 	}
+	.logo {
+		position: fixed;
+		left: 0;
+		top: 0;
+		z-index: 50;
+		padding: 1rem var(--base-padding-x);
+		pointer-events: auto;
+	}
+	.logo-img {
+		transition: filter 0.3s ease;
+	}
+	.logo.logo-white .logo-img {
+		filter: brightness(0) invert(1);
+	}
 	@media (min-width: 768px) {
-		.navigation,
+		.navigation {
+			padding: 2rem var(--base-padding-x);
+		}
 		.logo {
 			padding: 2rem var(--base-padding-x);
 		}
@@ -203,7 +227,7 @@ const { pathname } = Astro.url;
 		let isHoveringMenu = false;
 		let menuCollapsed = false;
 
-		const pageLinksUl = document.querySelector("header .nav-container nav ul");
+		const pageLinksUl = document.querySelector(".nav-container nav ul");
 
 		if (!pageLinksUl) {
 			return;
@@ -212,32 +236,36 @@ const { pathname } = Astro.url;
 		let menuCollapseTl = gsap
 			.timeline({
 				defaults: {
-					ease: "back.inOut(1.7)",
-					duration: 0.4,
+					ease: "power2.inOut",
+					duration: 0.35,
 				},
 				paused: true,
 				onStart: () => {
 					pageLinksUl.classList.add("collapsed");
 				},
+				onReverseComplete: () => {
+					pageLinksUl.classList.remove("collapsed");
+				}
 			})
-			.to("header .nav-container", { width: 125 })
-			.to(
-				pageLinksUl,
-				{
-					x: () => {
-						const pathName = window.location.pathname;
-
-						if (pathName === "/" || pathName === "/it/") {
-							return "9.5rem";
-						} else if (pathName.startsWith("/blog") || pathName.startsWith("/it/blog")) {
-							return "3.5rem";
-						}
-
-						return "-3.5rem";
-					},
-				},
-				"<",
-			);
+			.to(".nav-container nav", {
+				opacity: 0,
+				scale: 0.9,
+				pointerEvents: "none",
+				display: "none",
+				duration: 0.15
+			})
+			.to(".nav-container", {
+				width: 56,
+				height: 56,
+				paddingLeft: 0,
+				paddingRight: 0,
+				duration: 0.25
+			}, "-=0.05")
+			.to(".desktop-hamburger", {
+				opacity: 1,
+				pointerEvents: "auto",
+				duration: 0.15
+			}, "-=0.1");
 
 		const isTouchDevice = window.matchMedia("(hover: none)").matches;
 
@@ -245,7 +273,7 @@ const { pathname } = Astro.url;
 			function expandMenu() {
 				menuCollapseTl.reverse();
 				pageLinksUl?.classList.remove("collapsed");
-				document.querySelector("header .navigation")?.classList.remove("collapsed");
+				document.querySelector(".navigation")?.classList.remove("collapsed");
 				menuCollapsed = false;
 			}
 
@@ -253,7 +281,7 @@ const { pathname } = Astro.url;
 				if (window.scrollY > 200) {
 					menuCollapseTl.play();
 					pageLinksUl?.classList.add("collapsed");
-					document.querySelector("header .navigation")?.classList.add("collapsed");
+					document.querySelector(".navigation")?.classList.add("collapsed");
 					menuCollapsed = true;
 				}
 			}
@@ -288,9 +316,116 @@ const { pathname } = Astro.url;
 
 			window?.removeEventListener("scroll", handleScroll);
 			window?.addEventListener("scroll", handleScroll);
+
+			const desktopHam = document.querySelector(".desktop-hamburger");
+			if (desktopHam) {
+				desktopHam.addEventListener("click", expandMenu);
+			}
 		}
+
+		// ScrollTrigger to dock the fixed header logo in the footer at the bottom of the page
+		const footer = document.querySelector("footer");
+		if (footer) {
+			gsap.to(".logo", {
+				scrollTrigger: {
+					trigger: footer,
+					start: "top bottom",
+					end: "bottom bottom",
+					scrub: true,
+				},
+				y: () => {
+					const f = document.querySelector("footer");
+					if (!f) return 0;
+					return window.innerHeight - f.offsetHeight;
+				},
+				ease: "none"
+			});
+		}
+
+		function checkLogoTheme() {
+			const logo = document.querySelector(".logo") as HTMLElement;
+			const headerBg = document.getElementById("header-backdrop");
+			if (!logo) return;
+			
+			const logoRect = logo.getBoundingClientRect();
+			// Compute logo center Y coordinate relative to document scroll
+			const logoCenterY = window.scrollY + logoRect.top + logoRect.height / 2;
+			
+			// Find all block-level elements that act as sections or containers
+			const sections = document.querySelectorAll("section, footer, header, div.section, #method");
+			let isOverDark = false;
+			
+			sections.forEach((sec) => {
+				const htmlSec = sec as HTMLElement;
+				// Get absolute top/bottom offset coordinates of the section relative to the page
+				const rect = htmlSec.getBoundingClientRect();
+				const top = rect.top + window.scrollY;
+				const height = rect.height;
+				const bottom = top + height;
+				
+				if (logoCenterY >= top && logoCenterY <= bottom) {
+					const classes = htmlSec.className;
+					const id = htmlSec.id;
+					
+					// Checks for known dark classes / identifiers
+					const hasDarkClass = classes.includes("bg-black") || 
+					                     classes.includes("bg-zinc-900") || 
+					                     classes.includes("bg-[#18181b]") || 
+					                     classes.includes("faq-section") || 
+					                     classes.includes("tagline-section") || 
+					                     id === "method";
+					                     
+					// Double check using computed background color
+					let hasDarkComputed = false;
+					const bg = window.getComputedStyle(htmlSec).backgroundColor;
+					if (bg && bg !== "rgba(0, 0, 0, 0)" && bg !== "transparent") {
+						const match = bg.match(/\d+/g);
+						if (match) {
+							const r = parseInt(match[0], 10);
+							const g = parseInt(match[1], 10);
+							const b = parseInt(match[2], 10);
+							const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+							if (luminance < 140) {
+								hasDarkComputed = true;
+							}
+						}
+					}
+					
+					if (hasDarkClass || hasDarkComputed) {
+						isOverDark = true;
+					}
+				}
+			});
+			
+			if (isOverDark) {
+				logo.classList.add("logo-white");
+				if (headerBg) {
+					headerBg.classList.remove("bg-black/5");
+					headerBg.classList.add("bg-white/10");
+				}
+			} else {
+				logo.classList.remove("logo-white");
+				if (headerBg) {
+					headerBg.classList.remove("bg-white/10");
+					headerBg.classList.add("bg-black/5");
+				}
+			}
+		}
+
+		// Initial check
+		checkLogoTheme();
+		// Scroll listener for real-time background detection
+		window?.addEventListener("scroll", checkLogoTheme, { passive: true });
+		// Recalculate on refresh
+		ScrollTrigger.addEventListener("refresh", checkLogoTheme);
 	}
 
-	document.removeEventListener("DOMContentLoaded", init); // astro:page-load
-	document.addEventListener("DOMContentLoaded", init); // astro:page-load
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", init);
+	} else {
+		init();
+	}
+
+	// Also support Astro's client-side view transition lifecycle
+	document.addEventListener("astro:page-load", init);
 </script>

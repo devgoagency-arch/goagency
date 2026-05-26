@@ -1,0 +1,181 @@
+---
+import ScrollArrow from "@components/global/ScrollArrow.astro";
+import { getLangFromUrl, useTranslatedPath } from "@i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const translatePath = useTranslatedPath(lang);
+
+const pillars = [
+	{
+		number: "01",
+		title: "Digital Products & Commerce",
+		subtitle: "Efficiency and revenue, built in.",
+		content: "B2B and B2C portals, headless e-commerce, ERP and accounting integrations. We build the operational infrastructure that removes friction between your business and your customers.",
+		image: "/images/Digital Products & Commerce.webp"
+	},
+	{
+		number: "02",
+		title: "Brand & Visual Strategy",
+		subtitle: "Authority is designed, not declared.",
+		content: "Brand strategy, visual identity, UX/UI systems and AI-powered creative production. We define how your business should be perceived — and build every visual layer to support that positioning.",
+		image: "/images/Brand & Visual Strategy.webp"
+	},
+	{
+		number: "03",
+		title: "Corporate Communications",
+		subtitle: "Complexity made legible.",
+		content: "Sustainability reports, corporate websites and investor communications. We translate dense data and institutional language into structured narratives that earn trust.",
+		image: "/images/Corporate Communications.webp"
+	},
+	{
+		number: "04",
+		title: "Community & Social Impact",
+		subtitle: "The license to operate is earned, not assumed.",
+		content: "Territorial communication, ESG strategy and community engagement. We work where the business meets the community — so operations can continue.",
+		image: "/images/Community & Social Impact.webp"
+	}
+];
+---
+
+<section id="architecture" class="home-dark-section architecture-section w-full bg-[#18181b] text-white pt-12 lg:pt-16 pb-12 lg:pb-16 relative">
+	<div class="mx-auto max-w-[90rem] px-4 md:px-8">
+		
+		<!-- Header -->
+		<div class="mb-16 lg:mb-24 flex flex-col items-center text-center gap-4">
+			<span class="text-xs uppercase tracking-[0.2em] text-zinc-500 font-mono">Our Architecture</span>
+			<h2 class="font-display text-2xl md:text-3xl lg:text-4xl font-light italic text-zinc-300 max-w-4xl">
+				"Every solution we build lives inside one of these four disciplines."
+			</h2>
+		</div>
+
+		<!-- Masonry Layout (Flex Columns) -->
+		<div class="flex flex-col md:flex-row gap-8 lg:gap-12 items-start">
+			
+			<!-- Columna Izquierda: Pilares 1 y 3 -->
+			<div class="flex flex-col gap-8 lg:gap-12 w-full md:w-1/2">
+				{[pillars[0], pillars[2]].map((pillar) => (
+					<article class="architecture-card flex flex-col bg-[#272521]/40 rounded-2xl p-6 md:p-8 border border-zinc-800/50 hover:border-zinc-700/80 transition-colors opacity-0 translate-y-12 h-fit">
+						
+						<div class="flex items-center gap-4 mb-6">
+							<div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#18181b] p-3 flex items-center justify-center shrink-0 border border-zinc-800">
+								<img src={pillar.image} alt={pillar.title} class="w-full h-full object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.1)]" />
+							</div>
+							<span class="text-3xl font-display font-bold text-[#45ccaa]">
+								{pillar.number}
+							</span>
+						</div>
+
+						<div class="flex flex-col gap-3">
+							<h3 class="text-2xl md:text-3xl font-display font-bold tracking-tight">
+								{pillar.title}
+							</h3>
+							<p class="text-base md:text-lg text-zinc-400 italic">
+								{pillar.subtitle}
+							</p>
+							<p class="text-sm md:text-base text-zinc-300 leading-relaxed mt-1 mb-6">
+								{pillar.content}
+							</p>
+						</div>
+
+						<div class="pt-4 border-t border-zinc-800">
+							<a 
+								href={translatePath("/proyectos")} 
+								class="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-zinc-400 hover:text-[#45ccaa] transition-colors">
+								View projects →
+							</a>
+						</div>
+					</article>
+				))}
+			</div>
+
+			<!-- Columna Derecha: Pilares 2 y 4 (Staggered offset) -->
+			<div class="flex flex-col gap-8 lg:gap-12 w-full md:w-1/2 md:mt-32">
+				{[pillars[1], pillars[3]].map((pillar) => (
+					<article class="architecture-card flex flex-col bg-[#272521]/40 rounded-2xl p-6 md:p-8 border border-zinc-800/50 hover:border-zinc-700/80 transition-colors opacity-0 translate-y-12 h-fit">
+						
+						<div class="flex items-center gap-4 mb-6">
+							<div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#18181b] p-3 flex items-center justify-center shrink-0 border border-zinc-800">
+								<img src={pillar.image} alt={pillar.title} class="w-full h-full object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.1)]" />
+							</div>
+							<span class="text-3xl font-display font-bold text-[#45ccaa]">
+								{pillar.number}
+							</span>
+						</div>
+
+						<div class="flex flex-col gap-3">
+							<h3 class="text-2xl md:text-3xl font-display font-bold tracking-tight">
+								{pillar.title}
+							</h3>
+							<p class="text-base md:text-lg text-zinc-400 italic">
+								{pillar.subtitle}
+							</p>
+							<p class="text-sm md:text-base text-zinc-300 leading-relaxed mt-1 mb-6">
+								{pillar.content}
+							</p>
+						</div>
+
+						<div class="pt-4 border-t border-zinc-800">
+							<a 
+								href={translatePath("/proyectos")} 
+								class="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-zinc-400 hover:text-[#45ccaa] transition-colors">
+								View projects →
+							</a>
+						</div>
+					</article>
+				))}
+			</div>
+
+		</div>
+
+		<!-- Bottom Banner -->
+		<div class="mt-24 mb-10 flex justify-center text-center">
+			<div class="inline-block border border-zinc-800 bg-[#272521]/30 rounded-full px-8 py-4 backdrop-blur-sm">
+				<p class="text-sm md:text-base font-mono tracking-widest text-zinc-400 mb-2">
+					SEO · GEO · SEM · CONTENT STRATEGY
+				</p>
+				<p class="text-xs md:text-sm text-zinc-500 italic">
+					Cross-cutting accelerators that run across all four pillars.
+				</p>
+			</div>
+		</div>
+
+		<div class="flex justify-center">
+			<ScrollArrow targetId="#team" upTargetId="#projects" upColor="#EDB74D" color="#45ccaa" id="architecture-arrow" />
+		</div>
+	</div>
+</section>
+
+<script>
+	import { gsap } from "gsap";
+	import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+	gsap.registerPlugin(ScrollTrigger);
+
+	function initArchitecture() {
+		const cards = gsap.utils.toArray(".architecture-card") as gsap.DOMTarget[];
+		
+		if (cards.length === 0) return;
+
+		cards.forEach((card, i) => {
+			gsap.to(card, {
+				scrollTrigger: {
+					trigger: card,
+					start: "top 85%", // Starts animation when the card is 85% down the viewport
+					end: "top 50%",
+					scrub: 1, // Smoothly animate based on scroll position
+					markers: false,
+				},
+				opacity: 1,
+				y: 0,
+				ease: "power2.out",
+			});
+		});
+	}
+
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", initArchitecture);
+	} else {
+		initArchitecture();
+	}
+	document.addEventListener("astro:page-load", initArchitecture);
+</script>

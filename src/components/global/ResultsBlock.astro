@@ -1,0 +1,57 @@
+---
+interface Stat {
+  number: string;
+  label: string;
+}
+
+interface Props {
+  stats: Stat[];
+  note?: string;
+}
+
+const { stats = [], note } = Astro.props;
+---
+
+<div class="results-block p-6 sm:p-8 md:p-10 my-8 bg-[#18181b] text-white shadow-xl">
+  <!-- Stats Grid -->
+  <div class={`grid gap-8 grid-cols-1 ${stats.length > 1 ? `md:grid-cols-${stats.length}` : ''} items-start`}>
+    {stats.map((stat) => (
+      <div class="stat-item flex flex-col gap-2">
+        <span class="stat-number font-display text-4xl sm:text-5xl font-bold tracking-tight text-[#45ccaa]">
+          {stat.number}
+        </span>
+        <span class="stat-label font-sans text-sm sm:text-base font-light text-zinc-300 leading-snug">
+          {stat.label}
+        </span>
+      </div>
+    ))}
+  </div>
+
+  <!-- Optional Note -->
+  {note && (
+    <div class="note-container mt-8 pt-6 border-t border-zinc-800/80">
+      <p class="font-sans text-xs sm:text-sm font-light text-zinc-400 leading-relaxed italic">
+        {note}
+      </p>
+    </div>
+  )}
+</div>
+
+<style>
+  .results-block {
+    border-radius: 10px;
+    --squircle-radius: 10px;
+    --squircle-smooth: 1;
+    /* Optional: support squircle masks if available */
+    mask-image: paint(squircle);
+  }
+  
+  .stat-number {
+    font-weight: 700 !important;
+  }
+  
+  .stat-label, .note-container p {
+    font-family: "Montserrat", sans-serif !important;
+    font-weight: 300 !important;
+  }
+</style>
