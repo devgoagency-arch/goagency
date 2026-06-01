@@ -28,6 +28,16 @@ const {
 const wpSeo = post ? extractWPSeo(post) : null;
 const seoProps = rankMathToAstroSeo(wpSeo, siteUrl);
 
+const fallbackCanonical = new URL(Astro.url.pathname, siteUrl).toString();
+const defaultOpenGraph = {
+	url: fallbackCanonical,
+	title: fallbackTitle,
+	description: fallbackDescription,
+	site_name: "Go Agency",
+	images: [{ url: `${siteUrl}/og-default.jpg`, width: 1200, height: 630, alt: "Go Agency" }]
+};
+const defaultTwitter = { cardType: "summary_large_image" };
+
 const orgSchema = getOrganizationSchema(siteUrl);
 ---
 
@@ -35,9 +45,9 @@ const orgSchema = getOrganizationSchema(siteUrl);
 <AstroSeo
 	title={seoProps.title ?? fallbackTitle}
 	description={seoProps.description ?? fallbackDescription}
-	canonical={seoProps.canonical}
-	openGraph={seoProps.openGraph}
-	twitter={seoProps.twitter}
+	canonical={seoProps.canonical ?? fallbackCanonical}
+	openGraph={seoProps.openGraph ?? defaultOpenGraph}
+	twitter={seoProps.twitter ?? defaultTwitter}
 />
 
 <!-- JSON-LD Organization Schema (siempre presente) -->

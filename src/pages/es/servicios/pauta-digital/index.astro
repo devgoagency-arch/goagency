@@ -2,18 +2,112 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import ScrollArrow from "@components/global/ScrollArrow.astro";
 import { Icon } from "astro-icon/components";
+import type { AstroSeoProps } from "@astrolib/seo";
+
+const seoProps: AstroSeoProps = {
+  title: "Tu negocio puede conseguir clientes por internet. | Pauta Digital GO Agency",
+  description: "No importa el sector. Si tienes clientes, tienes una audiencia que puedes alcanzar. Diseñamos la estrategia y gestionamos las campañas. Sin presupuesto quemado.",
+  openGraph: {
+    title: "Tu negocio puede conseguir clientes por internet. | Pauta Digital",
+    description: "No importa el sector. Si tienes clientes, tienes una audiencia que puedes alcanzar. Diseñamos la estrategia y gestionamos las campañas. Sin presupuesto quemado.",
+    images: [
+      {
+        url: "https://goestrategiacreativa.com/og-pauta-digital.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Go Agency - Pauta Digital para Empresas",
+      }
+    ]
+  }
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "¿Por qué mínimo 3 meses de permanencia?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Porque las campañas necesitan tiempo para aprender y optimizarse. El algoritmo de Meta o Google tarda entre 2 y 4 semanas en acumular datos suficientes. Si paras antes, no sabes si la estrategia funciona — solo sabes que no le diste tiempo. Después de los 3 meses, continúas mes a mes y puedes cancelar con 15 días de anticipación."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Cuánto debo invertir en pauta?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "El presupuesto de pauta es tuyo y va directo a la plataforma. Nosotros no lo manejamos. Te recomendamos un mínimo según tu sector y objetivos, pero lo decides tú. Con nuestra calculadora puedes estimar un punto de partida."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Por qué hasta 3 campañas en el paquete base y no solo 1?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Una sola campaña solo puede hacer una cosa a la vez. El escenario mínimo viable para la mayoría de negocios es: llegar a gente nueva + hacer retargeting a quienes ya te visitaron. Eso ya son 2 campañas con lógicas distintas. La tercera puede ser para una segunda plataforma o un objetivo diferente. No activamos más campañas de las necesarias — el número exacto lo definimos en la estrategia."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Funciona la pauta digital para negocios B2B o de nicho?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sí. Google Ads y Meta Ads permiten segmentar por cargo, industria, comportamiento e intención de búsqueda. Si tus clientes usan internet — y lo hacen — hay una forma de llegar a ellos con pauta bien diseñada. No existe un sector no apto, solo estrategias mal diseñadas."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Puedo combinar plataformas dentro del mismo paquete?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sí. Puedes tener campañas en Meta Ads, Google Ads y TikTok Ads dentro del mismo paquete si tiene sentido estratégico. Lo evaluamos antes de configurar cualquier cosa."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Qué pasa si quiero más de 5 campañas?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Contáctanos y diseñamos un plan a la medida. Para volúmenes más altos o campañas continuas, tenemos esquemas de gestión personalizados."
+      }
+    }
+  ]
+};
+
+const serviceSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "serviceType": "Pauta Digital y Gestión de Campañas",
+  "provider": {
+    "@type": "ProfessionalService",
+    "name": "Go Agency",
+    "image": "https://goestrategiacreativa.com/GoAgencyIcon.webp",
+    "url": "https://goestrategiacreativa.com"
+  },
+  "areaServed": "Global",
+  "description": "Diseñamos la estrategia, configuramos y gestionamos tus campañas en Meta Ads, Google Ads, TikTok Ads y más.",
+  "offers": {
+    "@type": "Offer",
+    "price": "950000",
+    "priceCurrency": "COP"
+  }
+};
 ---
 
 <BaseLayout
-	fallbackTitle="Pauta Digital para Empresas — GO Agency"
-	fallbackDescription="Diseñamos la estrategia, configuramos y gestionamos tus campañas en Meta Ads, Google Ads, TikTok y más. Sin importar tu sector."
-	pageSlug="es/servicios/pauta-digital"
+	seo={seoProps}
+	pageSlug="servicios/pauta-digital"
 	waPhone="573107541645"
 	waDefaultText="Hablemos"
 	waHoverText="Hablemos &rarr;"
 	waMessage="Hola Alejandra, estoy interesad@ en la Pauta Digital que vi en tu página :)"
 	cursorColor="#45ccaa"
 >
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(serviceSchema)} />
+
 <!-- HERO -->
   <section id="hero" class="relative w-full min-h-screen flex flex-col justify-center py-16 lg:py-20 bg-white text-black border-b border-zinc-200">
     <div class="mx-auto max-w-7xl px-4 md:px-8 flex flex-col items-center justify-center text-center">

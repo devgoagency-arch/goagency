@@ -74,9 +74,11 @@ export function getHreflangLinks(slug: string, siteUrl: string): { lang: string;
 	const langs = Object.keys(ui) as Lang[];
 	return langs.map((lang) => {
 		const prefix = !showDefaultLang && lang === defaultLang ? "" : `/${lang}`;
+		// Strip any existing language prefix (e.g. "es/" or "en/") from the slug
+		const cleanSlug = slug.replace(/^(es|en)\//, "");
 		return {
 			lang,
-			url: `${siteUrl}${prefix}/${slug}`.replace(/\/+/g, "/").replace(":/", "://"),
+			url: `${siteUrl}${prefix}/${cleanSlug}`.replace(/\/+/g, "/").replace(":/", "://"),
 		};
 	});
 }

@@ -69,6 +69,16 @@ export function getOrganizationSchema(siteUrl: string) {
         name: "Go Estrategia Creativa",
         url: siteUrl,
         logo: `${siteUrl}/favicons/apple-touch-icon.png`,
-        sameAs: [],
+        telephone: "+573107541645",
+        address: {
+            "@type": "PostalAddress",
+            "addressCountry": "CO",
+            "addressLocality": "Bogotá"
+        },
+        areaServed: ["CO", "US", "ES", "MX"],
+        sameAs: [
+            "https://www.instagram.com/goestrategiacreativa/",
+            "https://www.linkedin.com/company/goestrategiacreativa"
+        ],
     };
 }

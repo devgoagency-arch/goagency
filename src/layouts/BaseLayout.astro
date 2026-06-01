@@ -49,10 +49,39 @@ const {
 } = Astro.props;
 
 // Hreflang para multiidioma
-const hreflangLinks = pageSlug ? getHreflangLinks(pageSlug, siteUrl) : [];
+const hreflangLinks = pageSlug !== undefined ? getHreflangLinks(pageSlug, siteUrl) : [];
 
 // Si viene prop `seo` legacy y no hay wpPost → modo legado (páginas existentes)
 const useLegacySeo = !!legacySeo && !wpPost;
+
+const canonicalURL = new URL(pathname, siteUrl).toString();
+
+const defaultSeoProps: AstroSeoProps = {
+	title: fallbackTitle,
+	description: fallbackDescription,
+	canonical: canonicalURL,
+	openGraph: {
+		url: canonicalURL,
+		title: fallbackTitle,
+		description: fallbackDescription,
+		site_name: "Go Agency",
+		images: [
+			{
+				url: `${siteUrl}/og-default.jpg`,
+				width: 1200,
+				height: 630,
+				alt: "Go Agency",
+			}
+		]
+	},
+	twitter: {
+		cardType: "summary_large_image",
+	},
+};
+
+// Fusionamos legacySeo con los defaults, dando prioridad a legacySeo
+const mergedLegacySeo = { ...defaultSeoProps, ...legacySeo };
+
 
 function cursorFollowerActive() {
 	const activePaths = [
@@ -96,7 +125,7 @@ function cursorFollowerActive() {
 		<BaseHead />
 		{
 			useLegacySeo ? (
-				<AstroSeo {...legacySeo} />
+				<AstroSeo {...mergedLegacySeo} />
 			) : (
 				<RankMathSeo post={wpPost} siteUrl={siteUrl} fallbackTitle={fallbackTitle} fallbackDescription={fallbackDescription} />
 			)
