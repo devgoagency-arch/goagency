@@ -91,6 +91,11 @@ const { color = "#edb74d" } = Astro.props;
 	#cursor-follower {
 		pointer-events: none;
 		opacity: 0;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
 		z-index: 50; /* Por encima del contenido pero debajo de modales/nav si es necesario */
 		-webkit-transition: opacity 0.2s ease-in-out 1s;
 		transition: opacity 0.2s ease-in-out 1s;
@@ -125,5 +130,6 @@ const { color = "#edb74d" } = Astro.props;
 		background-color: #edb74d;
 		-webkit-transform: scale(0.5);
 		transform: scale(0.5);
+		z-index: 50;
 	}
 </style>

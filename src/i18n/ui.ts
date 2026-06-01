@@ -81,12 +81,12 @@ export const ui = {
 	},
 	es: {
 		or: "o",
-		contact: "Contacto",
-		contacts: "Contacto",
+		contact: "Contact",
+		contacts: "Contact",
 		contactus: "Contáctanos",
-		projects: "Proyectos",
-		services: "Servicios",
-		about: "Nosotros",
+		projects: "Projects",
+		services: "Services",
+		about: "About",
 		homepage: "Inicio",
 		tagline:
 			"Nuestro objetivo es convertir tu marca en un motor poderoso de crecimiento y conversiones, combinando estrategia creativa, presencia digital y SEO sólido. Nos enfocamos en conectar tu historia con tu audiencia, asegurándonos de que tu negocio destaque. Tu éxito es nuestra misión.",

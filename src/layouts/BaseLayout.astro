@@ -28,6 +28,11 @@ type Props = {
 	pageSlug?: string;
 	/** Color del blob del cursor (opcional) */
 	cursorColor?: string;
+	/** Props opcionales para el WhatsAppFloat */
+	waPhone?: string;
+	waDefaultText?: string;
+	waHoverText?: string;
+	waMessage?: string;
 };
 
 const {
@@ -37,6 +42,10 @@ const {
 	fallbackDescription = "Transformamos marcas a través de estrategia creativa, diseño digital y contenido de impacto.",
 	pageSlug = "",
 	cursorColor,
+	waPhone,
+	waDefaultText,
+	waHoverText,
+	waMessage,
 } = Astro.props;
 
 // Hreflang para multiidioma
@@ -68,7 +77,9 @@ function cursorFollowerActive() {
 		pathname.startsWith("/proyectos") ||
 		pathname.startsWith("/blog") ||
 		pathname.startsWith("/es/proyectos") ||
-		pathname.startsWith("/es/blog")
+		pathname.startsWith("/es/blog") ||
+		pathname.startsWith("/servicios") ||
+		pathname.startsWith("/es/servicios")
 	);
 }
 ---
@@ -106,6 +117,6 @@ function cursorFollowerActive() {
 		<Footer />
 		<LegalModals />
 		<CookieBanner />
-		<WhatsAppFloat />
+		<WhatsAppFloat phone={waPhone} defaultText={waDefaultText} hoverText={waHoverText} message={waMessage} />
 	</body>
 </html>
