@@ -7,7 +7,7 @@ const { color = "#edb74d" } = Astro.props;
 ---
 
 <div id="cursor-follower" data-xdata="{ isTouchDevice: 'ontouchstart' in window }" data-xshow="!isTouchDevice">
-	<div id="blob" class="blob" style={`background-color: ${color};`}></div>
+	<div id="blob" class="blob"></div>
 </div>
 
 <script>
@@ -62,11 +62,11 @@ const { color = "#edb74d" } = Astro.props;
 			}
 
 			wrap.addEventListener("mouseenter", function (e) {
-				gsap.to(blob, { duration: 0.5, opacity: 0.5 });
+				gsap.to(blob, { duration: 0.3, opacity: 0.6, scale: 1.2 });
 			});
 
 			wrap.addEventListener("mouseleave", function (e) {
-				gsap.to(blob, { duration: 0.5, opacity: 0.2 });
+				gsap.to(blob, { duration: 0.3, opacity: 0.3, scale: 1 });
 
 				if (wrap && wrap.hasAttribute("data-cursor-parallax")) {
 					gsap.to(wrap, { duration: 0.3, scale: 1, x: 0, y: 0 });
@@ -80,7 +80,23 @@ const { color = "#edb74d" } = Astro.props;
 			});
 		});
 
+
+		// Change color based on background
+		document.addEventListener("mouseover", (e) => {
+			const target = e.target as HTMLElement;
+			const section = target.closest('section, footer, header, .bg-white, .bg-zinc-900');
+			if (section && blob) {
+				const isWhite = section.classList.contains('bg-white') || section.classList.contains('bg-slate-50') || window.getComputedStyle(section).backgroundColor === 'rgb(255, 255, 255)';
+				if (isWhite) {
+					blob.style.borderColor = '#e25432'; // Naranja
+				} else {
+					blob.style.borderColor = '#45ccaa'; // Verde
+				}
+			}
+		});
+
 		magicCursor?.classList.add("active");
+
 	}
 
 	document.removeEventListener("DOMContentLoaded", init); // astro:page-load
@@ -96,40 +112,31 @@ const { color = "#edb74d" } = Astro.props;
 		left: 0;
 		width: 100vw;
 		height: 100vh;
-		z-index: 50; /* Por encima del contenido pero debajo de modales/nav si es necesario */
-		-webkit-transition: opacity 0.2s ease-in-out 1s;
+		z-index: 9999;
 		transition: opacity 0.2s ease-in-out 1s;
 	}
 
 	@keyframes fadeIn {
-		0% {
-			opacity: 0;
-		}
-		100% {
-			opacity: 1;
-		}
+		0% { opacity: 0; }
+		100% { opacity: 1; }
 	}
 
 	#cursor-follower.active {
 		animation: fadeIn 2s forwards;
-		-webkit-animation: fadeIn 2s forwards;
-		-moz-animation: fadeIn 2s forwards;
-		-o-animation: fadeIn 2s forwards;
-		-ms-animation: fadeIn 2s forwards;
 	}
 
 	#blob {
 		position: fixed;
-		border-radius: 100px;
-		filter: blur(100px);
-		opacity: 20%;
+		border-radius: 50%;
+		border: 1.5px solid #45ccaa;
+		opacity: 0.3;
 		top: 0;
 		left: 0;
-		height: 500px;
-		width: 500px;
-		background-color: #edb74d;
-		-webkit-transform: scale(0.5);
-		transform: scale(0.5);
-		z-index: 50;
+		height: 36px;
+		width: 36px;
+		background-color: transparent;
+		transform: scale(1);
+		z-index: 9999;
+		transition: border-color 0.3s ease, width 0.3s ease, height 0.3s ease, opacity 0.3s ease;
 	}
 </style>
