@@ -198,7 +198,7 @@ if (localProject) {
 						<!-- WordPress content or MDX content -->
 						{
 							RenderedContent ? (
-								<div class="prose-styles !max-w-none">
+								<div class="wp-content prose-styles !max-w-none">
 									<RenderedContent components={{ ResultsBlock }} />
 								</div>
 							) : content ? (
@@ -233,6 +233,78 @@ if (localProject) {
 		</article>
 	</GrainyGradient>
 </BaseLayout>
+
+<script>
+	class ResultsBlock extends HTMLElement {
+		connectedCallback() {
+			// Evitar doble renderizado si Astro ya lo renderizó (MDX)
+			if (this.querySelector('.results-block')) return;
+
+			const statsAttr = this.getAttribute('stats');
+			const noteAttr = this.getAttribute('note');
+			
+			if (!statsAttr) return;
+
+			let stats = [];
+			try {
+				// Reemplazar posibles comillas y etiquetas <br> que inyecta WordPress por los saltos de línea
+				const cleanStats = statsAttr
+					.replace(/<br\s*\/?>/gi, '') // Quitar los <br />
+					.replace(/<p>/gi, '')        // Quitar los <p>
+					.replace(/<\/p>/gi, '')      // Quitar los </p>
+					.replace(/&quot;/g, '"')
+					.replace(/”/g, '"')
+					.replace(/“/g, '"')
+					.replace(/[\u2018\u2019]/g, "'")
+					.replace(/[\u201C\u201D]/g, '"')
+					.replace(/&nbsp;/g, ' ')
+					.replace(/[\r\n\t]/g, '');   // Quitar saltos de línea literales
+				stats = JSON.parse(cleanStats);
+			} catch (e) {
+				console.error("Error parsing stats JSON in results-block", e);
+				this.innerHTML = `<div style="color:red; background:#fff0f0; padding:15px; border:2px solid red; border-radius:8px; margin: 20px 0; font-family: monospace; font-size: 12px; overflow-wrap: break-word;">
+					<strong>Error de sintaxis en el JSON de esta página:</strong><br/>
+					${e.message}<br/><br/>
+					<strong>Texto que intentó procesar:</strong><br/>
+					${cleanStats}
+				</div>`;
+				return;
+			}
+
+			const statsHtml = stats.map((stat) => `
+				<div class="stat-item flex flex-col gap-2 py-6 first:pt-0 last:pb-0 w-full">
+					<span class="stat-number font-display text-3xl sm:text-4xl font-light tracking-tight text-[#45ccaa] whitespace-nowrap">
+						${stat.number}
+					</span>
+					<span class="stat-label font-sans text-[10px] sm:text-xs font-normal text-stone-500 uppercase tracking-wide" style="font-family: 'Montserrat', sans-serif;">
+						${stat.label}
+					</span>
+				</div>
+			`).join('');
+
+			const noteHtml = noteAttr ? `
+				<div class="note-container mt-6 pt-6 border-t border-stone-200/80">
+					<p class="font-sans text-[11px] sm:text-xs font-light text-stone-500 leading-relaxed italic" style="font-family: 'Montserrat', sans-serif;">
+						${noteAttr}
+					</p>
+				</div>
+			` : '';
+
+			this.innerHTML = `
+				<div class="results-block p-8 sm:p-10 my-10 bg-white/70 backdrop-blur-md shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-stone-200/50" style="border-radius: 10px;">
+					<div class="flex flex-col divide-y divide-stone-200/80">
+						${statsHtml}
+					</div>
+					${noteHtml}
+				</div>
+			`;
+		}
+	}
+
+	if (!customElements.get('results-block')) {
+		customElements.define('results-block', ResultsBlock);
+	}
+</script>
 
 <style is:global>
 	.proyecto-detalle {
