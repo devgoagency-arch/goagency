@@ -29,6 +29,19 @@ try {
 			<h2 class="font-display text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight text-current">Selected Work</h2>
 		</div>
 
+		<div class="hidden">
+		md:col-start-1 md:col-start-2 md:row-span-2
+		md:row-start-1 md:row-start-2 md:row-start-3 md:row-start-4 md:row-start-5 
+		md:row-start-6 md:row-start-7 md:row-start-8 md:row-start-9 md:row-start-10
+		md:row-start-11 md:row-start-12 md:row-start-13 md:row-start-14 md:row-start-15
+		md:row-start-16 md:row-start-17 md:row-start-18 md:row-start-19 md:row-start-20
+		md:row-start-21 md:row-start-22 md:row-start-23 md:row-start-24 md:row-start-25
+		md:row-start-26 md:row-start-27 md:row-start-28 md:row-start-29 md:row-start-30
+		md:row-start-31 md:row-start-32 md:row-start-33 md:row-start-34 md:row-start-35
+		md:row-start-36 md:row-start-37 md:row-start-38 md:row-start-39 md:row-start-40
+		md:row-start-41 md:row-start-42 md:row-start-43 md:row-start-44 md:row-start-45
+		md:row-start-46 md:row-start-47 md:row-start-48 md:row-start-49 md:row-start-50
+		</div>
 		{
 			wpProjects.length > 0 ? (
 				<ol class="grid grid-cols-1 gap-24 md:grid-cols-2 lg:gap-44">
@@ -40,7 +53,7 @@ try {
 							const challenge = getProjectChallenge(project);
 							const result = getProjectResult(project);
 							const pillars = getProjectPillars(project);
-							const slug = project.slug;
+							const slug = project.id;
 
 							return (
 								<WokCard

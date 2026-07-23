@@ -3,9 +3,9 @@ dns.setDefaultResultOrder("ipv4first");
 
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
-import tailwind from "@astrojs/tailwind";
+import tailwindcss from "@tailwindcss/vite";
 import icon from "astro-icon";
-import vercel from '@astrojs/vercel/serverless';
+import vercel from '@astrojs/vercel';
 import { defineConfig } from "astro/config";
 
 // https://astro.build/config
@@ -18,6 +18,7 @@ export default defineConfig({
     },
     output: "server",
     vite: {
+        plugins: [tailwindcss()],
         server: {
             watch: {
                 usePolling: true,
@@ -41,9 +42,7 @@ export default defineConfig({
         drafts: true,
     },
     integrations: [
-        tailwind({
-            applyBaseStyles: false,
-        }),
+
         sitemap(),
         mdx(),
         icon(),

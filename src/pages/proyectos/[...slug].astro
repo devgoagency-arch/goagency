@@ -6,7 +6,7 @@
 export const prerender = false;
 
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 import {
 	getWPProyectoBySlug,
 	getImageUrl,
@@ -53,13 +53,13 @@ let wpProject: any = null;
 const localProjects = await getCollection("projects");
 const localProject =
 	localProjects.find((prj) => {
-		const parts = prj.slug.split("/");
+		const parts = prj.id.split("/");
 		const prjSlug = parts.length > 1 ? parts.slice(1).join("/") : parts[0];
 		return prjSlug === slug;
 	}) ?? null;
 
 if (localProject) {
-	const { Content } = await localProject.render();
+	const { Content } = await render(localProject);
 	RenderedContent = Content;
 	title = localProject.data.title;
 	imageUrl = localProject.data.image?.source?.src ?? null;

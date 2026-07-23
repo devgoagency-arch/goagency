@@ -52,6 +52,7 @@ const translatePath = useTranslatedPath(lang);
 </GrainyGradient>
 
 <style>
+	@reference "../../styles/global.css";
 	.contact-page-wrapper {
 		min-height: 100vh;
 	}
@@ -66,7 +67,13 @@ const translatePath = useTranslatedPath(lang);
 
 	input,
 	textarea {
-		@apply pointer-events-auto relative m-0 w-full cursor-text rounded-lg border-0 px-5 py-2 text-xl font-normal not-italic outline-none placeholder:text-gray-400 focus:ring-primary-400;
+		@apply pointer-events-auto relative m-0 w-full cursor-text rounded-lg border-0 px-5 py-2 text-xl font-normal not-italic outline-none;
+		&::placeholder {
+			@apply text-gray-400;
+		}
+		&:focus {
+			@apply ring-primary-400;
+		}
 		background-color: #fce7ef !important; /* Ligeramente rosado para combinar con el fondo */
 	}
 </style>

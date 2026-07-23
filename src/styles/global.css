@@ -1,7 +1,45 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700&display=swap');
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/typography";
+@plugin "@tailwindcss/aspect-ratio";
+@theme {
+  --breakpoint-sm: 540px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+  --radius-4xl: 2rem;
+  --radius-5xl: 3rem;
+  --radius-6xl: 4rem;
+  --radius-7xl: 5rem;
+  --color-black: #131313;
+  --color-primary-50: #edfdf8;
+  --color-primary-100: #d1f9ee;
+  --color-primary-200: #a7f1df;
+  --color-primary-300: #6fe4cc;
+  --color-primary-400: #3dd4b3;
+  --color-primary-500: #45ccaa;
+  --color-primary-600: #25a688;
+  --color-primary-700: #1e856e;
+  --color-primary-800: #1b6959;
+  --color-primary-900: #195649;
+  --color-primary-950: #093220;
+  --color-secondary-50: #fff3ef;
+  --color-secondary-100: #ffe4da;
+  --color-secondary-200: #ffcab8;
+  --color-secondary-300: #ffa588;
+  --color-secondary-400: #f87555;
+  --color-secondary-500: #e45331;
+  --color-secondary-600: #d13d1a;
+  --color-secondary-700: #ae3017;
+  --color-secondary-800: #8f2b18;
+  --color-secondary-900: #772919;
+  --color-secondary-950: #41100a;
+  --font-display: "Montserrat", sans-serif;
+  --font-sans: "Montserrat", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
 
 @font-face {
 	font-family: "Midnight";
@@ -214,7 +252,28 @@ html {
 }
 
 .prose-styles {
-	@apply prose mx-auto max-w-3xl text-slate-500 prose-headings:font-bold prose-headings:tracking-tighter prose-headings:text-black prose-a:text-slate-500 hover:prose-a:text-black prose-blockquote:border-l-slate-950 prose-blockquote:text-slate-500 prose-code:text-black prose-pre:rounded-lg prose-li:marker:text-slate-500;
+	@apply prose mx-auto max-w-3xl text-slate-500;
+	h1, h2, h3, h4, h5, h6 {
+		@apply font-bold tracking-tighter text-black;
+	}
+	a {
+		@apply text-slate-500;
+		&:hover {
+			@apply text-black;
+		}
+	}
+	blockquote {
+		@apply border-l-slate-950 text-slate-500;
+	}
+	code {
+		@apply text-black;
+	}
+	pre {
+		@apply rounded-lg;
+	}
+	li::marker {
+		@apply text-slate-500;
+	}
 }
 
 .section {
@@ -377,3 +436,12 @@ html {
 	color: #45ccaa;
 	font-weight: 700;
 }
+/* Tailwind Safelist:
+md:col-start-1 md:col-start-2 md:row-span-2
+md:row-start-1 md:row-start-2 md:row-start-3 md:row-start-4 md:row-start-5 md:row-start-6 md:row-start-7 md:row-start-8 md:row-start-9 md:row-start-10 
+md:row-start-11 md:row-start-12 md:row-start-13 md:row-start-14 md:row-start-15 md:row-start-16 md:row-start-17 md:row-start-18 md:row-start-19 md:row-start-20 
+md:row-start-21 md:row-start-22 md:row-start-23 md:row-start-24 md:row-start-25 md:row-start-26 md:row-start-27 md:row-start-28 md:row-start-29 md:row-start-30 
+md:row-start-31 md:row-start-32 md:row-start-33 md:row-start-34 md:row-start-35 md:row-start-36 md:row-start-37 md:row-start-38 md:row-start-39 md:row-start-40 
+md:row-start-41 md:row-start-42 md:row-start-43 md:row-start-44 md:row-start-45 md:row-start-46 md:row-start-47 md:row-start-48 md:row-start-49 md:row-start-50 
+md:row-start-51 md:row-start-52 md:row-start-53 md:row-start-54 md:row-start-55 md:row-start-56 md:row-start-57 md:row-start-58 md:row-start-59 md:row-start-60 
+*/

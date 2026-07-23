@@ -34,8 +34,12 @@ const translatePath = useTranslatedPath(lang);
 </section>
 
 <style>
+	@reference "../../styles/global.css";
 	.gradient-element {
-		@apply relative left-1/2 -z-10 aspect-[1155/678] w-[36.125rem] max-w-none -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-40rem)] sm:w-[72.1875rem];
+		@apply relative left-1/2 -z-10 aspect-[1155/678] w-[36.125rem] max-w-none -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30;
+		@media (min-width: 540px) {
+			@apply left-[calc(50%-40rem)] w-[72.1875rem];
+		}
 		clip-path: polygon(
 			74.1% 44.1%,
 			100% 61.6%,

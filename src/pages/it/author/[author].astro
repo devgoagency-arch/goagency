@@ -11,7 +11,7 @@ export async function getStaticPaths() {
 
 	return authors
 		.map((entry) => {
-			const [lang, ...slug] = entry.slug.split("/");
+			const [lang, ...slug] = entry.id.split("/");
 			return { params: { lang, author: slug.join("/") || undefined }, props: entry };
 		})
 		.filter((entry) => entry.params.lang === "it");
@@ -22,7 +22,7 @@ const author = Astro.props;
 const seo: AstroSeoProps = {
 	title: author.data.name,
 	description: author.data.description,
-	canonical: `https://mintaka.co/it/author/${author.slug}/`,
+	canonical: `https://mintaka.co/it/author/${author.id}/`,
 };
 ---
 

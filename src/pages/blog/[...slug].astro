@@ -9,7 +9,7 @@ export const prerender = true;
  * 2. Cuando WP esté configurado, suma los posts de WP automáticamente
  */
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 import { getAllWPPostSlugs, getWPPostBySlug, getFeaturedImage, decodeWPHtml } from "@lib/wordpress";
 import type { CollectionEntry } from "astro:content";
 import { getLangFromUrl } from "@i18n/utils";
@@ -19,7 +19,7 @@ export async function getStaticPaths() {
 	// 1. Posts MDX locales (siempre)
 	const localPosts = await getCollection("posts");
 	const localPaths = localPosts.map((post) => {
-		const [postLang, ...slugParts] = post.slug.split("/");
+		const [postLang, ...slugParts] = post.id.split("/");
 		const slug = slugParts.join("/");
 		const prefix = postLang === "en" ? "" : `/${postLang}`;
 		return {
@@ -70,7 +70,7 @@ let date = "";
 let RenderedContent: any = null;
 
 if (localPost) {
-	const { Content } = await localPost.render();
+	const { Content } = await render(localPost);
 	RenderedContent = Content;
 	title = localPost.data.title;
 	image = localPost.data.image;

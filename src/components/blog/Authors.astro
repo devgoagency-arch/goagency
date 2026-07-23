@@ -10,11 +10,11 @@ const translatePath = useTranslatedPath(lang);
 
 const allAuthors = (await getCollection("authors"))
 	.filter((author) => {
-		const [authorLang, ...slug] = author.slug.split("/");
+		const [authorLang, ...slug] = author.id.split("/");
 		return authorLang === lang;
 	})
 	.map((author) => {
-		const [authorLang, slug] = author.slug.split("/");
+		const [authorLang, slug] = author.id.split("/");
 
 		return {
 			...author,
@@ -33,7 +33,7 @@ const allAuthors = (await getCollection("authors"))
 				{
 					allAuthors.map((author) => (
 						<li class="w-full py-8 font-mono text-xl font-semibold text-zinc-800 hover:text-black md:text-2xl ">
-							<a href={translatePath(`/author/${author.slug}`)} class="flex w-full items-center justify-between">
+							<a href={translatePath(`/author/${author.id}`)} class="flex w-full items-center justify-between">
 								{author.data.name}{" "}
 								<span class="ml-auto">
 									<Icon name="ic:baseline-arrow-right" width="30" />
