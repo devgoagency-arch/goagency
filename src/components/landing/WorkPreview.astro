@@ -19,7 +19,9 @@ const { class: className } = Astro.props;
 let wpProjects: any[] = [];
 try {
 	wpProjects = await getWPProyectos(5);
-} catch {}
+} catch (err: any) {
+	console.error("[WorkPreview] Error cargando proyectos de WP:", err?.message ?? err);
+}
 ---
 
 <section id="projects" class:list={["section work-preview-section home-dark-section", className]}>
@@ -53,7 +55,7 @@ try {
 							const challenge = getProjectChallenge(project);
 							const result = getProjectResult(project);
 							const pillars = getProjectPillars(project);
-							const slug = project.id;
+							const slug = project.slug;
 
 							return (
 								<WokCard

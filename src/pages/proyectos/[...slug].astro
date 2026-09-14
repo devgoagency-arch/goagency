@@ -245,33 +245,35 @@ if (localProject) {
 			
 			if (!statsAttr) return;
 
-			let stats = [];
+			let stats: {number: string; label: string}[] = [];
+			let cleanStats = '';
 			try {
 				// Reemplazar posibles comillas y etiquetas <br> que inyecta WordPress por los saltos de línea
-				const cleanStats = statsAttr
+				cleanStats = statsAttr
 					.replace(/<br\s*\/?>/gi, '') // Quitar los <br />
 					.replace(/<p>/gi, '')        // Quitar los <p>
 					.replace(/<\/p>/gi, '')      // Quitar los </p>
 					.replace(/&quot;/g, '"')
-					.replace(/”/g, '"')
-					.replace(/“/g, '"')
+					.replace(/\u201c/g, '"')
+					.replace(/\u201d/g, '"')
 					.replace(/[\u2018\u2019]/g, "'")
 					.replace(/[\u201C\u201D]/g, '"')
 					.replace(/&nbsp;/g, ' ')
 					.replace(/[\r\n\t]/g, '');   // Quitar saltos de línea literales
 				stats = JSON.parse(cleanStats);
 			} catch (e) {
-				console.error("Error parsing stats JSON in results-block", e);
+				const err = e as Error;
+				console.error("Error parsing stats JSON in results-block", err);
 				this.innerHTML = `<div style="color:red; background:#fff0f0; padding:15px; border:2px solid red; border-radius:8px; margin: 20px 0; font-family: monospace; font-size: 12px; overflow-wrap: break-word;">
-					<strong>Error de sintaxis en el JSON de esta página:</strong><br/>
-					${e.message}<br/><br/>
-					<strong>Texto que intentó procesar:</strong><br/>
-					${cleanStats}
-				</div>`;
+				<strong>Error de sintaxis en el JSON de esta página:</strong><br/>
+				${err.message}<br/><br/>
+				<strong>Texto que intentó procesar:</strong><br/>
+				${cleanStats}
+			</div>`;
 				return;
 			}
 
-			const statsHtml = stats.map((stat) => `
+			const statsHtml = stats.map((stat: {number: string; label: string}) => `
 				<div class="stat-item flex flex-col gap-2 py-6 first:pt-0 last:pb-0 w-full">
 					<span class="stat-number font-display text-3xl sm:text-4xl font-light tracking-tight text-[#45ccaa] whitespace-nowrap">
 						${stat.number}
