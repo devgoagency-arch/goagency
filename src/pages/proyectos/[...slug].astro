@@ -308,8 +308,64 @@ if (localProject) {
 	}
 </script>
 
+<script>
+	function initScrollReveal() {
+		const root = document.querySelector<HTMLElement>('.wp-content');
+		if (!root) return;
+		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+		// Si WP envuelve todo en un único contenedor, animar sus hijos
+		let items = Array.from(root.children) as HTMLElement[];
+		while (items.length === 1 && items[0].children.length > 1) {
+			items = Array.from(items[0].children) as HTMLElement[];
+		}
+
+		// Imágenes: carga diferida nativa
+		root.querySelectorAll('img').forEach((img) => {
+			if (!img.hasAttribute('loading')) img.setAttribute('loading', 'lazy');
+		});
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						entry.target.classList.add('is-visible');
+						observer.unobserve(entry.target);
+					}
+				});
+			},
+			{ threshold: 0.1, rootMargin: '0px 0px -8% 0px' },
+		);
+
+		items.forEach((el) => {
+			el.classList.add('reveal-on-scroll');
+			observer.observe(el);
+		});
+	}
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initScrollReveal);
+	} else {
+		initScrollReveal();
+	}
+</script>
+
 <style is:global>
 	.proyecto-detalle {
 		overflow: visible !important;
+	}
+
+	.reveal-on-scroll {
+		opacity: 0;
+		transform: translateY(40px);
+		transition:
+			opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+			transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+		will-change: opacity, transform;
+	}
+
+	.reveal-on-scroll.is-visible {
+		opacity: 1;
+		transform: none;
 	}
 </style>
